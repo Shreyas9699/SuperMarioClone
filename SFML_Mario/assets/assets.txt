@@ -1,0 +1,56 @@
+Texture   TexStand      assets/textures/megaman/stand64.png
+Texture   TexRun        assets/textures/megaman/run64.png
+Texture   TexAir        assets/textures/megaman/air64.png
+Texture   TexBullet     assets/textures/megaman/megaBuster.png
+Texture   TexCoin       assets/textures/misc/coin.png
+Texture   TexBrick      assets/textures/mario_assets/brick.png
+Texture   TexQ          assets/textures/mario_assets/qfade.png
+Texture   TexQ2         assets/textures/mario_assets/secret-box.png
+Texture   TexPipeM      assets/textures/mario_assets/pipe-med.png
+Texture   TexPipeB      assets/textures/mario_assets/pipe-big.png
+Texture   TexPipeS      assets/textures/mario_assets/pipe-small.png
+Texture   TexCloudB     assets/textures/mario_assets/cloud-big.png
+Texture   TexCloudS     assets/textures/mario_assets/cloud-small.png
+Texture   TexCloudM     assets/textures/mario_assets/cloud-med.png
+Texture   TexBushBig    assets/textures/mario_assets/bush-big.png
+Texture   TexBushSmall  assets/textures/mario_assets/bush-small.png
+Texture   TexBushMed    assets/textures/mario_assets/bush-med.png
+Texture   TexGround     assets/textures/mario_assets/wall.png
+Texture   TexBlock      assets/textures/mario_assets/block.png
+Texture   TexCastle     assets/textures/mario_assets/castle.png
+Texture   TexSolid      assets/textures/mario_assets/solid.png
+Texture   TexPole       assets/textures/mario_assets/flag.png
+Texture   TexCastle     assets/textures/mario_assets/castle.png
+Texture   TexHillBig    assets/textures/mario_assets/hill-big.png
+Texture   TexHillSmall  assets/textures/mario_assets/hill-small.png
+Animation Stand         TexStand        2     10
+Animation Run           TexRun          4     10
+Animation Air           TexAir          1     0
+Animation Coin          TexCoin         1     0
+Animation Question      TexQ            4     10
+Animation Brick         TexBrick        1     0
+Animation Question2     TexQ2           1     0
+Animation PipeB         TexPipeB        1     0
+Animation PipeS         TexPipeS        1     0
+Animation PipeM         TexPipeM        1     0
+Animation CloudBig      TexCloudB       1     0
+Animation CloudSmall    TexCloudS       1     0
+Animation CloudMed      TexCloudM       1     0
+Animation BushBig       TexBushBig      1     0
+Animation BushSmall     TexBushSmall    1     0
+Animation BushMed       TexBushMed      1     0
+Animation HillBig       TexHillBig      1     0
+Animation HillSmall     TexHillSmall    1     0
+Animation Ground        TexGround       1     0
+Animation Block         TexBlock        1     0
+Animation Solid         TexSolid        1     0
+Animation Pole	        TexPole         1     0
+Animation Castle	    TexCastle       1     0
+Animation Bullet        TexBullet       1     0
+Font      Tech          assets/fonts/Techno.ttf
+Font      Mario         assets/fonts/RetroMario-Regular.otf
+Font      Megaman       assets/fonts/Mega-Man-Battle-Network.ttf
+Font      Arial         assets/fonts/ArialRegular.ttf
+Font      Ubuntu        assets/fonts/Ubuntu.ttf
+Font      CourierNew    assets/fonts/CourierNew.ttf
+Font      Pixel         assets/fonts/pixeled.ttf

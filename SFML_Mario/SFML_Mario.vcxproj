@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{41c2c258-54b1-4c91-9835-db66a3f14206}</ProjectGuid>
+    <RootNamespace>SFMLMario</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>C:\libraries\SFML-2.6.1\include;</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\libraries\SFML-2.6.1\lib;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sfml-main.lib;sfml-graphics.lib;sfml-window.lib;sfml-system.lib;sfml-audio.lib;sfml-network.lib</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>C:\libraries\SFML-2.6.1\include;</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\libraries\SFML-2.6.1\lib;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sfml-main.lib;sfml-graphics.lib;sfml-window.lib;sfml-system.lib;sfml-audio.lib;sfml-network.lib</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>C:\libraries\SFML-2.6.1\include;</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\libraries\SFML-2.6.1\lib;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sfml-main.lib;sfml-graphics.lib;sfml-window.lib;sfml-system.lib;sfml-audio.lib;sfml-network.lib</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>C:\libraries\SFML-2.6.1\include;</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\libraries\SFML-2.6.1\lib;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sfml-main.lib;sfml-graphics.lib;sfml-window.lib;sfml-system.lib;sfml-audio.lib;sfml-network.lib</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Text Include="assets\assets.txt" />
+    <Text Include="assets\levels\level1.txt" />
+    <Text Include="assets\levels\level2.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\..\Users\GF63\Downloads\assets\textures\megaman\megaJump.png" />
+    <Image Include="..\..\..\Users\GF63\Downloads\assets\textures\megaman\megaRun.png" />
+    <Image Include="..\..\..\Users\GF63\Downloads\assets\textures\megaman\megaStand.png" />
+    <Image Include="assets\textures\animations\coinspin.png" />
+    <Image Include="assets\textures\animations\explosion.png" />
+    <Image Include="assets\textures\animations\QuestionBlock.png" />
+    <Image Include="assets\textures\mario\block.png" />
+    <Image Include="assets\textures\mario\brick.png" />
+    <Image Include="assets\textures\mario\bushbig.png" />
+    <Image Include="assets\textures\mario\cloudbig.png" />
+    <Image Include="assets\textures\mario\cloudsmall.png" />
+    <Image Include="assets\textures\mario\flagpole.png" />
+    <Image Include="assets\textures\mario\flagtop.png" />
+    <Image Include="assets\textures\mario\ground.png" />
+    <Image Include="assets\textures\mario\pipe.png" />
+    <Image Include="assets\textures\mario\qfade.png" />
+    <Image Include="assets\textures\mario\question2.png" />
+    <Image Include="assets\textures\mario_assets\block.png" />
+    <Image Include="assets\textures\mario_assets\brick.png" />
+    <Image Include="assets\textures\mario_assets\bush-big.png" />
+    <Image Include="assets\textures\mario_assets\bush-med.png" />
+    <Image Include="assets\textures\mario_assets\bush-small.png" />
+    <Image Include="assets\textures\mario_assets\castle.png" />
+    <Image Include="assets\textures\mario_assets\cloud-big.png" />
+    <Image Include="assets\textures\mario_assets\cloud-med.png" />
+    <Image Include="assets\textures\mario_assets\cloud-small.png" />
+    <Image Include="assets\textures\mario_assets\coin-0.png" />
+    <Image Include="assets\textures\mario_assets\coin-1.png" />
+    <Image Include="assets\textures\mario_assets\coin-2.png" />
+    <Image Include="assets\textures\mario_assets\coin-3.png" />
+    <Image Include="assets\textures\mario_assets\enemy-0.png" />
+    <Image Include="assets\textures\mario_assets\enemy-1.png" />
+    <Image Include="assets\textures\mario_assets\enemy-dead.png" />
+    <Image Include="assets\textures\mario_assets\flag.png" />
+    <Image Include="assets\textures\mario_assets\flower.png" />
+    <Image Include="assets\textures\mario_assets\ground.png" />
+    <Image Include="assets\textures\mario_assets\hill-big.png" />
+    <Image Include="assets\textures\mario_assets\hill-small.png" />
+    <Image Include="assets\textures\mario_assets\mushroom-red.png" />
+    <Image Include="assets\textures\mario_assets\pipe-big.png" />
+    <Image Include="assets\textures\mario_assets\pipe-med.png" />
+    <Image Include="assets\textures\mario_assets\pipe-small.png" />
+    <Image Include="assets\textures\mario_assets\piranha-0.png" />
+    <Image Include="assets\textures\mario_assets\piranha-1.png" />
+    <Image Include="assets\textures\mario_assets\qfade.png" />
+    <Image Include="assets\textures\mario_assets\question2.png" />
+    <Image Include="assets\textures\mario_assets\secret-box.png" />
+    <Image Include="assets\textures\mario_assets\solid.png" />
+    <Image Include="assets\textures\mario_assets\star.png" />
+    <Image Include="assets\textures\mario_assets\turtle-fly-0.png" />
+    <Image Include="assets\textures\mario_assets\turtle-fly-1.png" />
+    <Image Include="assets\textures\mario_assets\turtle-turtleback-0.png" />
+    <Image Include="assets\textures\mario_assets\turtle-turtleback-1.png" />
+    <Image Include="assets\textures\mario_assets\turtle-walk-0.png" />
+    <Image Include="assets\textures\mario_assets\turtle-walk-1.png" />
+    <Image Include="assets\textures\mario_assets\wall.png" />
+    <Image Include="assets\textures\megaman\air64.png" />
+    <Image Include="assets\textures\megaman\megaManDead.png" />
+    <Image Include="assets\textures\megaman\megaManAir.png" />
+    <Image Include="assets\textures\megaman\megaManAirShoot.png" />
+    <Image Include="assets\textures\megaman\megaManRun.png" />
+    <Image Include="assets\textures\megaman\megaManRunShoot.png" />
+    <Image Include="assets\textures\megaman\megaManSlide.png" />
+    <Image Include="assets\textures\megaman\megamanStand.png" />
+    <Image Include="assets\textures\megaman\megaManStandShoot.png" />
+    <Image Include="assets\textures\megaman\run64.png" />
+    <Image Include="assets\textures\megaman\stand64.png" />
+    <Image Include="assets\textures\misc\8bitmegaman.png" />
+    <Image Include="assets\textures\misc\coin.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\include\Action.cpp" />
+    <ClCompile Include="src\include\Animation.cpp" />
+    <ClCompile Include="src\include\Assets.cpp" />
+    <ClCompile Include="src\include\Entity.cpp" />
+    <ClCompile Include="src\include\EntityManager.cpp" />
+    <ClCompile Include="src\include\GameEngine.cpp" />
+    <ClCompile Include="src\include\Physics.cpp" />
+    <ClCompile Include="src\include\Scene.cpp" />
+    <ClCompile Include="src\include\Scene_Menu.cpp" />
+    <ClCompile Include="src\include\Scene_Play.cpp" />
+    <ClCompile Include="src\include\Vec2.cpp" />
+    <ClCompile Include="src\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\include\Action.h" />
+    <ClInclude Include="src\include\Animation.h" />
+    <ClInclude Include="src\include\Assets.h" />
+    <ClInclude Include="src\include\common.h" />
+    <ClInclude Include="src\include\Components.h" />
+    <ClInclude Include="src\include\Entity.h" />
+    <ClInclude Include="src\include\EntityManager.h" />
+    <ClInclude Include="src\include\GameEngine.h" />
+    <ClInclude Include="src\include\Physics.h" />
+    <ClInclude Include="src\include\Scene.h" />
+    <ClInclude Include="src\include\Scene_Menu.h" />
+    <ClInclude Include="src\include\Scene_Play.h" />
+    <ClInclude Include="src\include\Vec2.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="assets\fonts\ArialRegular.ttf" />
+    <Font Include="assets\fonts\CourierNew.ttf" />
+    <Font Include="assets\fonts\Mega-Man-Battle-Network.ttf" />
+    <Font Include="assets\fonts\pixeled.ttf" />
+    <Font Include="assets\fonts\RetroMario-Regular.otf" />
+    <Font Include="assets\fonts\SourceCodePro_ExtraLight.ttf" />
+    <Font Include="assets\fonts\Techno.ttf" />
+    <Font Include="assets\fonts\Ubuntu.ttf" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
