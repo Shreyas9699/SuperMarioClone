@@ -25,8 +25,8 @@ void Scene_Play::init(const std::string& levelPath)
 	registerAction(sf::Keyboard::D,		 "RIGHT");
 	registerAction(sf::Keyboard::Space,	 "FIRE");
 
-	m_gridText.setCharacterSize(12);
-	m_gridText.setFont(m_game->getAssets().getFont("Mario"));
+	m_gridText.setCharacterSize(2);
+	m_gridText.setFont(m_game->getAssets().getFont("dogica"));
 
 	sf::View view = m_game->window().getView();
 	view.setSize(width() / 4.0f, height() / 4.0f);
@@ -47,9 +47,9 @@ Vec2 Scene_Play::gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity
 		The size of the grid width and height is stored in m_gridSize.x and m_gridSize.y 
 		The up-left corner of the Animation should align with the bottom left of the grid cell
 	*/
-	const Vec2& size = entity->getComponent<CAnimation>().animation.getSize();
-	float x = (gridX * m_gridSize.x) + (size.x / 2.0f);
-	float y = height() - (gridY * m_gridSize.y) - (size.y / 2.0f);
+	float x, y;
+	x = (gridX * m_gridSize.x) + (entity->getComponent<CAnimation>().animation.getSize().x / 2.0f);
+	y = height() - (gridY * m_gridSize.y) - (entity->getComponent<CAnimation>().animation.getSize().y / 2.0f);
 	return Vec2(x, y);
 }
 
@@ -113,11 +113,19 @@ void Scene_Play::spawnPlayer()
 	std::cout << "Completed creating Player entity\n";
 }
 
-void Scene_Play::spawnBullet(std::shared_ptr<Entity> entity)
+void Scene_Play::spawnBullet(std::shared_ptr<Entity>& e)
 {
-	// TODO: this should spawn a bullet at the given entity, going in the direction the entity is facing
+	// Spawn a bullet at the given entity, going in the direction the entity is facing
+	Vec2 ePos = e->getComponent<CTransform>().pos;
+	std::string name = "Bullet";
+	(e->getComponent<CTransform>().scale.x < 0) ? ePos.x += 16.0f : ePos.x -= 16.0f;
+	auto b = m_entityManager.addEntity(name);
+	auto& bulletTransform = b->addComponents<CTransform>(ePos);
+	b->addComponents<CAnimation>(m_game->getAssets().getAnimation(name), true);
+	b->addComponents<CBoundingBox>(m_game->getAssets().getAnimation(name).getSize() / 2);
+	bulletTransform.velocity.x = -1 * e->getComponent<CTransform>().scale.x * m_playerConfig.SPEED * 3;
+	b->addComponents<CLifeSpan>(1.632);
 }
-
 
 void Scene_Play::update()
 {
@@ -183,11 +191,26 @@ void Scene_Play::sMovement()
 	}
 	transform.prevPos = transform.pos;
 	transform.pos += transform.velocity;
+
+	for (auto& e : m_entityManager.getEntities("Bullet"))
+	{
+		e->getComponent<CTransform>().pos += e->getComponent<CTransform>().velocity;
+	}
 }
 
 void Scene_Play::sLifeSpan()
 {
-	// TODO: Check Lifespan of entities that have them, and destroy them id they go over
+	// Check Lifespan of entities that have them, and destroy them id they go over
+	for (auto& e : m_entityManager.getEntities())
+	{
+		if (e->hasComponent<CLifeSpan>())
+		{
+			if (e->getComponent<CLifeSpan>().lifeSpan < e->getComponent<CLifeSpan>().clock.getElapsedTime().asSeconds())
+			{
+				e->destroy();
+			}
+		}
+	}
 }
 
 void Scene_Play::sCollision()
@@ -258,6 +281,52 @@ void Scene_Play::sCollision()
 	if (pPos.x < 0.0f)
 	{
 		pPos.x = 0.0f;
+	}
+
+	for (auto& eb : m_entityManager.getEntities("Bullet"))
+	{
+		auto& pPos = eb->getComponent<CTransform>().pos;
+		auto& pVel = eb->getComponent<CTransform>().velocity;
+		auto& pPrevPos = eb->getComponent<CTransform>().prevPos;
+		for (auto& e : m_entityManager.getEntities())
+		{
+			if (!e->hasComponent<CBoundingBox>() || !e->hasComponent<CTransform>() || e == m_player 
+				|| e->getComponent<CAnimation>().animation.getName() == "Bullet")
+			{
+				continue;
+			}
+			Vec2 overlap = Physics::GetOverlap(e, eb);
+			Vec2 prevOverlap = Physics::GetPreviousOverlap(e, eb);
+
+			if (!(overlap.x < 0.0f || overlap.y < 0.0f))
+			{
+				auto& qPos = e->getComponent<CTransform>().pos;
+				auto& pPrevPos = eb->getComponent<CTransform>().prevPos;
+				if (prevOverlap.y > 0.0f)
+				{
+					pPos.x += pPrevPos.x < qPos.x ? -overlap.x : overlap.x;
+				}
+
+				if (prevOverlap.x > 0.0f)
+				{
+					if (pPrevPos.y > qPos.y)
+					{
+						pPos.y += overlap.y;
+						std::string name = e->getComponent<CAnimation>().animation.getName();
+						if (name == "Brick")
+						{
+							e->destroy();
+							eb->destroy();
+						}
+						else if ( name ==  "Question" || name == "Question2" || name == "PipeB" 
+							   || name == "PipeS" || name == "PipeM" || name == "Block" || name == "Solid")
+						{
+							eb->destroy();
+						}
+					}
+				}
+			}	
+		}
 	}
 }
 
@@ -342,12 +411,11 @@ void Scene_Play::sRender()
 		for (float y = 0; y < height(); y += m_gridSize.y) 
 		{
 			drawLine(Vec2(0, height() - y), Vec2(width(), height() - y));
-			for (int i = 0; i < width(); i += m_gridSize.x) 
+			for (float i = 0; i < width(); i += m_gridSize.x)
 			{
-				for (int j = 0; j < height(); j += m_gridSize.y) 
+				for (float j = 0; j < height(); j += m_gridSize.y)
 				{
 					m_gridText.setPosition(i, j);
-					m_gridText.setCharacterSize(12);
 					m_gridText.setString("(" + std::to_string((int)i / 64) + "," +
 						std::to_string((int)j / 64) + ")");
 					;
@@ -373,6 +441,11 @@ void Scene_Play::sDoAction(const Action& action)
 		else if (action.name() == "DOWN")				{ input.down = true; }
 		else if (action.name() == "RIGHT")				{ input.right = true; }
 		else if (action.name() == "LEFT")				{ input.left = true; }
+		else if (action.name() == "FIRE" && !input.shoot)
+		{
+			input.shoot = true;
+			spawnBullet(m_player); 
+		}
 	}
 	else if (action.type() == "END")
 	{
@@ -380,6 +453,7 @@ void Scene_Play::sDoAction(const Action& action)
 		else if (action.name() == "DOWN")	{ input.down = false; }
 		else if (action.name() == "RIGHT")	{ input.right = false; }
 		else if (action.name() == "LEFT")	{ input.left = false; }
+		else if (action.name() == "FIRE")   { input.shoot = false; }
 	}
 }
 

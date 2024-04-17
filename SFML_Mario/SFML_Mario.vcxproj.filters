@@ -4,6 +4,7 @@
     <Text Include="assets\assets.txt" />
     <Text Include="assets\levels\level1.txt" />
     <Text Include="assets\levels\level2.txt" />
+    <Text Include="assets\levels\level3.txt" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="assets\textures\animations\coinspin.png" />
@@ -75,6 +76,12 @@
     <Image Include="assets\textures\megaman\megaManRunShoot.png" />
     <Image Include="assets\textures\megaman\megaManSlide.png" />
     <Image Include="assets\textures\megaman\megamanStand.png" />
+    <Image Include="assets\textures\megaman\megaBuster.png" />
+    <Image Include="assets\textures\mario_assets\coinspin.png" />
+    <Image Include="assets\textures\mario_assets\explosion.png" />
+    <Image Include="assets\textures\mario_assets\piranha.png" />
+    <Image Include="assets\textures\megaman\megaManBullet.png" />
+    <Image Include="assets\textures\megaman\Bullet.png" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
@@ -114,5 +121,7 @@
     <Font Include="assets\fonts\Ubuntu.ttf" />
     <Font Include="assets\fonts\SourceCodePro_ExtraLight.ttf" />
     <Font Include="assets\fonts\pixeled.ttf" />
+    <Font Include="assets\fonts\Freedom.ttf" />
+    <Font Include="assets\fonts\dogica.ttf" />
   </ItemGroup>
 </Project>

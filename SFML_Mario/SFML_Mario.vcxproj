@@ -154,6 +154,7 @@
     <Text Include="assets\assets.txt" />
     <Text Include="assets\levels\level1.txt" />
     <Text Include="assets\levels\level2.txt" />
+    <Text Include="assets\levels\level3.txt" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\..\Users\GF63\Downloads\assets\textures\megaman\megaJump.png" />
@@ -186,9 +187,11 @@
     <Image Include="assets\textures\mario_assets\coin-1.png" />
     <Image Include="assets\textures\mario_assets\coin-2.png" />
     <Image Include="assets\textures\mario_assets\coin-3.png" />
+    <Image Include="assets\textures\mario_assets\coinspin.png" />
     <Image Include="assets\textures\mario_assets\enemy-0.png" />
     <Image Include="assets\textures\mario_assets\enemy-1.png" />
     <Image Include="assets\textures\mario_assets\enemy-dead.png" />
+    <Image Include="assets\textures\mario_assets\explosion.png" />
     <Image Include="assets\textures\mario_assets\flag.png" />
     <Image Include="assets\textures\mario_assets\flower.png" />
     <Image Include="assets\textures\mario_assets\ground.png" />
@@ -200,6 +203,7 @@
     <Image Include="assets\textures\mario_assets\pipe-small.png" />
     <Image Include="assets\textures\mario_assets\piranha-0.png" />
     <Image Include="assets\textures\mario_assets\piranha-1.png" />
+    <Image Include="assets\textures\mario_assets\piranha.png" />
     <Image Include="assets\textures\mario_assets\qfade.png" />
     <Image Include="assets\textures\mario_assets\question2.png" />
     <Image Include="assets\textures\mario_assets\secret-box.png" />
@@ -213,6 +217,9 @@
     <Image Include="assets\textures\mario_assets\turtle-walk-1.png" />
     <Image Include="assets\textures\mario_assets\wall.png" />
     <Image Include="assets\textures\megaman\air64.png" />
+    <Image Include="assets\textures\megaman\Bullet.png" />
+    <Image Include="assets\textures\megaman\megaBuster.png" />
+    <Image Include="assets\textures\megaman\megaManBullet.png" />
     <Image Include="assets\textures\megaman\megaManDead.png" />
     <Image Include="assets\textures\megaman\megaManAir.png" />
     <Image Include="assets\textures\megaman\megaManAirShoot.png" />
@@ -258,6 +265,8 @@
   <ItemGroup>
     <Font Include="assets\fonts\ArialRegular.ttf" />
     <Font Include="assets\fonts\CourierNew.ttf" />
+    <Font Include="assets\fonts\dogica.ttf" />
+    <Font Include="assets\fonts\Freedom.ttf" />
     <Font Include="assets\fonts\Mega-Man-Battle-Network.ttf" />
     <Font Include="assets\fonts\pixeled.ttf" />
     <Font Include="assets\fonts\RetroMario-Regular.otf" />
