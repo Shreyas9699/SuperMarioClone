@@ -124,7 +124,7 @@ void Scene_Play::spawnBullet(std::shared_ptr<Entity>& e)
 	b->addComponents<CAnimation>(m_game->getAssets().getAnimation(name), true);
 	b->addComponents<CBoundingBox>(m_game->getAssets().getAnimation(name).getSize() / 2);
 	bulletTransform.velocity.x = -1 * e->getComponent<CTransform>().scale.x * m_playerConfig.SPEED * 3;
-	b->addComponents<CLifeSpan>(1.632);
+	b->addComponents<CLifeSpan>(1.832);
 }
 
 void Scene_Play::update()
@@ -285,13 +285,11 @@ void Scene_Play::sCollision()
 
 	for (auto& eb : m_entityManager.getEntities("Bullet"))
 	{
-		auto& pPos = eb->getComponent<CTransform>().pos;
-		auto& pVel = eb->getComponent<CTransform>().velocity;
-		auto& pPrevPos = eb->getComponent<CTransform>().prevPos;
+		auto& bPos = eb->getComponent<CTransform>().pos;
+		bool hasCollision = false;
 		for (auto& e : m_entityManager.getEntities())
 		{
-			if (!e->hasComponent<CBoundingBox>() || !e->hasComponent<CTransform>() || e == m_player 
-				|| e->getComponent<CAnimation>().animation.getName() == "Bullet")
+			if (e == m_player || e == eb || !e->hasComponent<CBoundingBox>() || !e->hasComponent<CTransform>())
 			{
 				continue;
 			}
@@ -300,32 +298,47 @@ void Scene_Play::sCollision()
 
 			if (!(overlap.x < 0.0f || overlap.y < 0.0f))
 			{
+				hasCollision = true;
 				auto& qPos = e->getComponent<CTransform>().pos;
-				auto& pPrevPos = eb->getComponent<CTransform>().prevPos;
-				if (prevOverlap.y > 0.0f)
+				auto& bPrevPos = eb->getComponent<CTransform>().prevPos;
+				// Check the direction of bullet's movement and handle collision accordingly
+				if (eb->getComponent<CTransform>().velocity.x > 0) // Bullet moving right
 				{
-					pPos.x += pPrevPos.x < qPos.x ? -overlap.x : overlap.x;
-				}
-
-				if (prevOverlap.x > 0.0f)
-				{
-					if (pPrevPos.y > qPos.y)
+					if (bPrevPos.x < qPos.x)
 					{
-						pPos.y += overlap.y;
-						std::string name = e->getComponent<CAnimation>().animation.getName();
+						const std::string& name = e->getComponent<CAnimation>().animation.getName();
 						if (name == "Brick")
 						{
 							e->destroy();
 							eb->destroy();
 						}
-						else if ( name ==  "Question" || name == "Question2" || name == "PipeB" 
-							   || name == "PipeS" || name == "PipeM" || name == "Block" || name == "Solid")
+						else if (name == "Question" || name == "Question2" || name == "PipeB"
+							|| name == "PipeS" || name == "PipeM" || name == "Block" || name == "Solid")
 						{
 							eb->destroy();
 						}
 					}
 				}
-			}	
+				else // Bullet moving left
+				{
+					if (bPrevPos.x > qPos.x)
+					{
+						const std::string& name = e->getComponent<CAnimation>().animation.getName();
+						if (name == "Brick")
+						{
+							std::cout << "Collision of bullet with brick\n";
+							e->destroy();
+							eb->destroy();
+						}
+						else if (name == "Question" || name == "Question2" || name == "PipeB"
+							|| name == "PipeS" || name == "PipeM" || name == "Block" || name == "Solid")
+						{
+							std::cout << "Collision of bullet with non breakable entity\n";
+							eb->destroy();
+						}
+					}
+				}
+			}
 		}
 	}
 }
