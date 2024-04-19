@@ -261,16 +261,16 @@ void Scene_Play::sCollision()
 				m_player->getComponent<CTransform>().velocity.y = 0.0f;
 			}
 		}
-	}
-
-	if (!hasCollision)
-	{
-		if (m_player->getComponent<CState>().state != "Air")
+		if (!m_player->getComponent<CInput>().canJump && prevOverlap.y > 0.0f)
 		{
-			m_player->getComponent<CState>().state = "Air";
-			m_StateChanged = true;
+			if (m_player->getComponent<CState>().state != "Air")
+			{
+				m_player->getComponent<CState>().state = "Air";
+				m_StateChanged = true;
+			}
 		}
 	}
+
 
 	if (pPos.y > height())
 	{
@@ -326,14 +326,12 @@ void Scene_Play::sCollision()
 						const std::string& name = e->getComponent<CAnimation>().animation.getName();
 						if (name == "Brick")
 						{
-							std::cout << "Collision of bullet with brick\n";
 							e->destroy();
 							eb->destroy();
 						}
 						else if (name == "Question" || name == "Question2" || name == "PipeB"
 							|| name == "PipeS" || name == "PipeM" || name == "Block" || name == "Solid")
 						{
-							std::cout << "Collision of bullet with non breakable entity\n";
 							eb->destroy();
 						}
 					}

@@ -29,7 +29,7 @@ void Scene_Menu::init(const std::string& menuConfig)
 	m_menuText.setCharacterSize(40); 
 	m_menuInstText.setFont(m_game->getAssets().getFont("Pixel"));
 	m_menuInstText.setFillColor(sf::Color::Black);
-	m_menuInstText.setString("Up : W    Down : S    Play : ENTER    Quit : ESC");
+	m_menuInstText.setString("Up : W    DOWN : S    PLAY : ENTER    QUIT : ESC");
 	m_menuInstText.setCharacterSize(m_menuText.getCharacterSize() / 2);
 	m_menuInstText.setPosition(20.0f, m_game->window().getSize().y - 30.0f); // Position at bottom left
 	std::cout << "MENU Scene init Completed!" << std::endl;
