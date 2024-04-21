@@ -247,10 +247,20 @@ void Scene_Play::sCollision()
 					if (name == "Question")
 					{
 						e->addComponents<CAnimation>(m_game->getAssets().getAnimation("Question2"), true);
+						Vec2 pos = e->getComponent<CTransform>().pos;
+						pos.y -= 16.5;
+						auto eCoin = m_entityManager.addEntity("Coin");
+						eCoin->addComponents<CTransform>(pos);
+						eCoin->addComponents<CAnimation>(m_game->getAssets().getAnimation("Coin"), true);
+						//eCoin->addComponents<CBoundingBox>(m_game->getAssets().getAnimation("Coin").getSize());
 					}
 					else if (name == "Brick")
 					{
+						Vec2& pos = e->getComponent<CTransform>().pos;
 						e->destroy();
+						auto eExplosion = m_entityManager.addEntity("Explosion");
+						eExplosion->addComponents<CTransform>(pos);
+						eExplosion->addComponents<CAnimation>(m_game->getAssets().getAnimation("Explosion"), false);
 					}
 				}
 				else
@@ -309,8 +319,13 @@ void Scene_Play::sCollision()
 						const std::string& name = e->getComponent<CAnimation>().animation.getName();
 						if (name == "Brick")
 						{
+							Vec2& pos = e->getComponent<CTransform>().pos;
 							e->destroy();
 							eb->destroy();
+							auto eExplosion = m_entityManager.addEntity("Explosion");
+							eExplosion->addComponents<CTransform>(pos);
+							eExplosion->addComponents<CAnimation>(m_game->getAssets().getAnimation("Explosion"), false);
+							
 						}
 						else if (name == "Question" || name == "Question2" || name == "PipeB"
 							|| name == "PipeS" || name == "PipeM" || name == "Block" || name == "Solid")
@@ -326,8 +341,12 @@ void Scene_Play::sCollision()
 						const std::string& name = e->getComponent<CAnimation>().animation.getName();
 						if (name == "Brick")
 						{
+							Vec2& pos = e->getComponent<CTransform>().pos;
 							e->destroy();
 							eb->destroy();
+							auto eExplosion = m_entityManager.addEntity("Explosion");
+							eExplosion->addComponents<CTransform>(pos);
+							eExplosion->addComponents<CAnimation>(m_game->getAssets().getAnimation("Explosion"), false);
 						}
 						else if (name == "Question" || name == "Question2" || name == "PipeB"
 							|| name == "PipeS" || name == "PipeM" || name == "Block" || name == "Solid")

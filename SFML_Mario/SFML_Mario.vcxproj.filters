@@ -24,9 +24,6 @@
     <Image Include="assets\textures\megaman\run64.png" />
     <Image Include="assets\textures\megaman\stand64.png" />
     <Image Include="assets\textures\misc\coin.png" />
-    <Image Include="..\..\..\Users\GF63\Downloads\assets\textures\megaman\megaStand.png" />
-    <Image Include="..\..\..\Users\GF63\Downloads\assets\textures\megaman\megaJump.png" />
-    <Image Include="..\..\..\Users\GF63\Downloads\assets\textures\megaman\megaRun.png" />
     <Image Include="assets\textures\mario_assets\block.png" />
     <Image Include="assets\textures\mario_assets\bush-big.png" />
     <Image Include="assets\textures\mario_assets\bush-med.png" />
@@ -82,6 +79,9 @@
     <Image Include="assets\textures\mario_assets\piranha.png" />
     <Image Include="assets\textures\megaman\megaManBullet.png" />
     <Image Include="assets\textures\megaman\Bullet.png" />
+    <Image Include="assets\textures\mario_assets\explosionS.png" />
+    <Image Include="assets\textures\animations\coinspinCrop.png" />
+    <Image Include="assets\textures\animations\coinspinCropS.png" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />

@@ -40,20 +40,14 @@ class CLifeSpan : public Components
 {
 public:
 	sf::Clock clock{};
-	float lifeSpan = 0;
+	double lifeSpan = 0;
 
 	CLifeSpan() {}
-	explicit CLifeSpan(float l) 
+	explicit CLifeSpan(double l)
 		: lifeSpan(l) 
 	{ 
 		clock.restart();
 	}
-	// int lifeSpan		= 0;
-	// int frameCreated	= 0;
-
-	// CLifeSpan() {}
-	// CLifeSpan(int l, int f)
-	//	: lifeSpan(l), frameCreated(f) {}
 };
 
 class CInput : public Components

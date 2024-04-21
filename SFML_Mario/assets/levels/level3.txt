@@ -17,4 +17,6 @@ Tile  PipeS        28   2.5
 Tile  PipeM        31   3
 Tile  Pole	       34   5
 Tile  Bullet       3    4
+Dec	  Explosion    10   10
+Tile  Coin         4   6
 Player  2 6 24 24 10 10 5 0 Buster

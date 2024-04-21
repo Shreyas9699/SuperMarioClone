@@ -2,7 +2,7 @@ Texture   TexStand      assets/textures/megaman/stand64.png
 Texture   TexRun        assets/textures/megaman/run64.png
 Texture   TexAir        assets/textures/megaman/air64.png
 Texture   TexBullet     assets/textures/megaman/Bullet.png
-Texture   TexCoin       assets/textures/misc/coin.png
+Texture   TexCoin       assets/textures/animations/coinspinCropS.png
 Texture   TexBrick      assets/textures/mario_assets/brick.png
 Texture   TexQ          assets/textures/mario_assets/qfade.png
 Texture   TexQ2         assets/textures/mario_assets/secret-box.png
@@ -23,11 +23,13 @@ Texture   TexPole       assets/textures/mario_assets/flag.png
 Texture   TexCastle     assets/textures/mario_assets/castle.png
 Texture   TexHillBig    assets/textures/mario_assets/hill-big.png
 Texture   TexHillSmall  assets/textures/mario_assets/hill-small.png
+Texture   TexExplosion  assets/textures/mario_assets/explosionS.png
 Animation Stand         TexStand        2     10
 Animation Run           TexRun          4     10
 Animation Air           TexAir          1     0
-Animation Coin          TexCoin         1     0
+Animation Coin          TexCoin         6     10
 Animation Question      TexQ            4     10
+Animation Explosion     TexExplosion    12    10
 Animation Brick         TexBrick        1     0
 Animation Question2     TexQ2           1     0
 Animation PipeB         TexPipeB        1     0

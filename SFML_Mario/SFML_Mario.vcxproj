@@ -157,10 +157,9 @@
     <Text Include="assets\levels\level3.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\..\Users\GF63\Downloads\assets\textures\megaman\megaJump.png" />
-    <Image Include="..\..\..\Users\GF63\Downloads\assets\textures\megaman\megaRun.png" />
-    <Image Include="..\..\..\Users\GF63\Downloads\assets\textures\megaman\megaStand.png" />
     <Image Include="assets\textures\animations\coinspin.png" />
+    <Image Include="assets\textures\animations\coinspinCrop.png" />
+    <Image Include="assets\textures\animations\coinspinCropS.png" />
     <Image Include="assets\textures\animations\explosion.png" />
     <Image Include="assets\textures\animations\QuestionBlock.png" />
     <Image Include="assets\textures\mario\block.png" />
@@ -192,6 +191,7 @@
     <Image Include="assets\textures\mario_assets\enemy-1.png" />
     <Image Include="assets\textures\mario_assets\enemy-dead.png" />
     <Image Include="assets\textures\mario_assets\explosion.png" />
+    <Image Include="assets\textures\mario_assets\explosionS.png" />
     <Image Include="assets\textures\mario_assets\flag.png" />
     <Image Include="assets\textures\mario_assets\flower.png" />
     <Image Include="assets\textures\mario_assets\ground.png" />
