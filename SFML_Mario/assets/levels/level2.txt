@@ -218,4 +218,4 @@ Tile	Ground       154 0.5
 Tile	Ground       155 0.5
 Tile    Block        147 1.5
 Tile    Block        148 1.5
-Player  2 6 24 24 10 10 15 0.8 Buster
+Player  2 6 16 16 10 10 15 0.8 Buster

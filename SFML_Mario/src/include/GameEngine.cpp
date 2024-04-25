@@ -8,8 +8,8 @@
     Run() contains game main loop
 */
 
-int wWidht = 1280;
-int wHeight = 720;
+int wWidht  = 1600;
+int wHeight = 900;
 //1280x720, 1920x1080, or 2560x1440 
 
 GameEngine::GameEngine(const std::string& path)

@@ -157,11 +157,11 @@
     <Text Include="assets\levels\level3.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="assets\textures\animations\coinspin.png" />
-    <Image Include="assets\textures\animations\coinspinCrop.png" />
-    <Image Include="assets\textures\animations\coinspinCropS.png" />
-    <Image Include="assets\textures\animations\explosion.png" />
-    <Image Include="assets\textures\animations\QuestionBlock.png" />
+    <Image Include="assets\textures\marioCharacter\BulletNew.png" />
+    <Image Include="assets\textures\marioCharacter\marioSmallAir.png" />
+    <Image Include="assets\textures\marioCharacter\marioSmallRun.png" />
+    <Image Include="assets\textures\marioCharacter\marioSmallShoot.png" />
+    <Image Include="assets\textures\marioCharacter\marioSmallStand.png" />
     <Image Include="assets\textures\mario\block.png" />
     <Image Include="assets\textures\mario\brick.png" />
     <Image Include="assets\textures\mario\bushbig.png" />
@@ -216,20 +216,9 @@
     <Image Include="assets\textures\mario_assets\turtle-walk-0.png" />
     <Image Include="assets\textures\mario_assets\turtle-walk-1.png" />
     <Image Include="assets\textures\mario_assets\wall.png" />
-    <Image Include="assets\textures\megaman\air64.png" />
-    <Image Include="assets\textures\megaman\Bullet.png" />
-    <Image Include="assets\textures\megaman\megaBuster.png" />
+    <Image Include="assets\textures\megaman\air64S.png" />
+    <Image Include="assets\textures\megaman\marioRunning.jpeg" />
     <Image Include="assets\textures\megaman\megaManBullet.png" />
-    <Image Include="assets\textures\megaman\megaManDead.png" />
-    <Image Include="assets\textures\megaman\megaManAir.png" />
-    <Image Include="assets\textures\megaman\megaManAirShoot.png" />
-    <Image Include="assets\textures\megaman\megaManRun.png" />
-    <Image Include="assets\textures\megaman\megaManRunShoot.png" />
-    <Image Include="assets\textures\megaman\megaManSlide.png" />
-    <Image Include="assets\textures\megaman\megamanStand.png" />
-    <Image Include="assets\textures\megaman\megaManStandShoot.png" />
-    <Image Include="assets\textures\megaman\run64.png" />
-    <Image Include="assets\textures\megaman\stand64.png" />
     <Image Include="assets\textures\misc\8bitmegaman.png" />
     <Image Include="assets\textures\misc\coin.png" />
   </ItemGroup>

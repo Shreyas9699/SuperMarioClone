@@ -48,8 +48,8 @@ Vec2 Scene_Play::gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity
 		The up-left corner of the Animation should align with the bottom left of the grid cell
 	*/
 	float x, y;
-	x = (gridX * m_gridSize.x) + (entity->getComponent<CAnimation>().animation.getSize().x / 2.0f);
-	y = height() - (gridY * m_gridSize.y) - (entity->getComponent<CAnimation>().animation.getSize().y / 2.0f);
+	x = (gridX * m_gridSize.x) + (entity->getComponent<CAnimation>().animation.getSize().x );
+	y = height() - (gridY * m_gridSize.y) - (entity->getComponent<CAnimation>().animation.getSize().y);
 	return Vec2(x, y);
 }
 
@@ -106,7 +106,7 @@ void Scene_Play::spawnPlayer()
 {
 	std::cout << "Creating Player entity\n";
 	m_player = m_entityManager.addEntity("player");
-	m_player->addComponents<CAnimation>(m_game->getAssets().getAnimation("Stand"), true);
+	m_player->addComponents<CAnimation>(m_game->getAssets().getAnimation("MarioRun"), true);
 	m_player->addComponents<CTransform>(gridToMidPixel(m_playerConfig.X, m_playerConfig.Y, m_player), Vec2(), Vec2(-1.0f, 1.0f), 0.0f);
 	m_player->addComponents<CBoundingBox>(Vec2(m_playerConfig.CX, m_playerConfig.CY));
 	m_player->addComponents<CGravity>(m_playerConfig.GRAVITY);
@@ -167,17 +167,25 @@ void Scene_Play::sMovement()
 
 	if (xSpeed == 0.0f)
 	{
-		if (m_player->getComponent<CState>().state != "Stand")
+		if (m_player->getComponent<CState>().state != "MarioStand")
 		{
-			m_player->getComponent<CState>().state = "Stand";
+			m_player->getComponent<CState>().state = "MarioStand";
 			m_StateChanged = true;
 		}
 	}
 	else
 	{
-		if (m_player->getComponent<CState>().state != "Run")
+		if (m_player->getComponent<CState>().state != "MarioRun")
 		{
-			m_player->getComponent<CState>().state = "Run";
+			m_player->getComponent<CState>().state = "MarioRun";
+			m_StateChanged = true;
+		}
+	}
+	if (input.shoot)
+	{
+		if (m_player->getComponent<CState>().state != "MarioStandShoot")
+		{
+			m_player->getComponent<CState>().state = "MarioStandShoot";
 			m_StateChanged = true;
 		}
 	}
@@ -189,6 +197,7 @@ void Scene_Play::sMovement()
 	{
 		transform.velocity.y = m_playerConfig.MAXSPEED;
 	}
+
 	transform.prevPos = transform.pos;
 	transform.pos += transform.velocity;
 
@@ -233,6 +242,14 @@ void Scene_Play::sCollision()
 			hasCollision = true;
 			auto& qPos = e->getComponent<CTransform>().pos;
 			auto& pPrevPos = m_player->getComponent<CTransform>().prevPos;
+			const std::string& name = e->getComponent<CAnimation>().animation.getName();
+
+			// destory coin upon collision with player
+			if (name == "Coin")
+			{
+				e->destroy();
+			}
+
 			if (prevOverlap.y > 0.0f)
 			{
 				pPos.x += pPrevPos.x < qPos.x ? -overlap.x : overlap.x;
@@ -252,7 +269,7 @@ void Scene_Play::sCollision()
 						auto eCoin = m_entityManager.addEntity("Coin");
 						eCoin->addComponents<CTransform>(pos);
 						eCoin->addComponents<CAnimation>(m_game->getAssets().getAnimation("Coin"), true);
-						//eCoin->addComponents<CBoundingBox>(m_game->getAssets().getAnimation("Coin").getSize());
+						eCoin->addComponents<CBoundingBox>(m_game->getAssets().getAnimation("Coin").getSize());
 					}
 					else if (name == "Brick")
 					{
@@ -273,9 +290,9 @@ void Scene_Play::sCollision()
 		}
 		if (!m_player->getComponent<CInput>().canJump && prevOverlap.y > 0.0f)
 		{
-			if (m_player->getComponent<CState>().state != "Air")
+			if (m_player->getComponent<CState>().state != "MarioAir")
 			{
-				m_player->getComponent<CState>().state = "Air";
+				m_player->getComponent<CState>().state = "MarioAir";
 				m_StateChanged = true;
 			}
 		}
@@ -328,7 +345,7 @@ void Scene_Play::sCollision()
 							
 						}
 						else if (name == "Question" || name == "Question2" || name == "PipeB"
-							|| name == "PipeS" || name == "PipeM" || name == "Block" || name == "Solid")
+							|| name == "PipeS" || name == "PipeM" || name == "Block" || name == "Solid" || name == "Coin")
 						{
 							eb->destroy();
 						}
@@ -441,7 +458,7 @@ void Scene_Play::sRender()
 		for (float y = 0; y < height(); y += m_gridSize.y) 
 		{
 			drawLine(Vec2(0, height() - y), Vec2(width(), height() - y));
-			for (float i = 0; i < width(); i += m_gridSize.x)
+			/*for (float i = 0; i < width(); i += m_gridSize.x)
 			{
 				for (float j = 0; j < height(); j += m_gridSize.y)
 				{
@@ -451,7 +468,7 @@ void Scene_Play::sRender()
 					;
 					m_game->window().draw(m_gridText);
 				}
-			}
+			}*/
 		}
 	}
 }

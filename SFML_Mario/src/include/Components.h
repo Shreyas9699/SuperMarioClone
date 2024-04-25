@@ -88,7 +88,7 @@ public:
 class CState : public Components
 {
 public:
-	std::string state = "Air";
+	std::string state = "MarioAir";
 
 	CState() {}
 	CState(const std::string& s)
