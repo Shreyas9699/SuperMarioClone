@@ -1,4 +1,5 @@
 #include <iostream>
+#include <chrono>
 #include "GameEngine.h"
 #include "Scene_Menu.h"
 
@@ -20,12 +21,14 @@ GameEngine::GameEngine(const std::string& path)
 
 void GameEngine::init(const std::string& path)
 {
+    auto start = std::chrono::high_resolution_clock::now();
     m_assets.loadFromFile(path);
+    auto end = std::chrono::high_resolution_clock::now();
+    std::cout << "Time taken to load assets : " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start) << std::endl;
     m_window.create(sf::VideoMode(wWidht, wHeight), "Definitely Not Mario");
     m_window.setFramerateLimit(60);
     m_window.setVerticalSyncEnabled(true);
     changeScene("MENU", std::make_shared<Scene_Menu>(this));
-    std::cout << "Completed initializing the Game window and create Menu" << std::endl;
 }
 
 void GameEngine::update()

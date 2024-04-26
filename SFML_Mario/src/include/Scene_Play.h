@@ -20,12 +20,17 @@ class Scene_Play : public Scene
 	bool					m_StateChanged		= false;
 	const Vec2				m_gridSize	= { 16.0f, 16 };
 	sf::Text				m_gridText;
+	long int				m_score = 0;
+	sf::Text				m_scoreText;
+	
+	std::vector<std::string> m_rewards = { "Coin", "Star", "MushroomR", "MushroomG" };
 
 	void init(const std::string& levelPath); 
 	Vec2 gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity) const;
 	void loadLevel(const std::string& filePath);
 	void spawnPlayer();
 	void spawnBullet(std::shared_ptr<Entity>& entity);
+	void onLevelEnd();
 	void onEnd();
 
 	// Systems

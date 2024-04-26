@@ -7,7 +7,7 @@ Dec     CloudMed    45  7
 Dec     HillSmall   50  1.5
 Dec     BushMed     76  1.5
 Dec     CloudSmall  80  7
-Dec     Castle      89  3.5
+Tile    Castle      91  3.5
 Tile    Ground      0   0.5
 Tile    Ground      1   0.5
 Tile    Ground      2   0.5

@@ -23,7 +23,7 @@ Dec		CloudBig 	 91  20
 Dec		BushBig 	 58  0.5
 Dec		BushBig 	 118  0.5
 Dec		CloudBig 	 115 10
-Dec		Castle 		 153 3.5
+Tile	Castle 		 153 3.5
 Tile	PipeB        15  3
 Tile    PipeS        35  2
 Tile    PipeM        51  2.5

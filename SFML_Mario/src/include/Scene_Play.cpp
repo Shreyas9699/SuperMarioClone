@@ -1,4 +1,6 @@
 #include <fstream>
+#include <random>
+#include <chrono>
 #include "Scene_Play.h"
 #include "GameEngine.h"
 #include "Physics.h"
@@ -28,14 +30,18 @@ void Scene_Play::init(const std::string& levelPath)
 	m_gridText.setCharacterSize(2);
 	m_gridText.setFont(m_game->getAssets().getFont("dogica"));
 
+	m_scoreText.setCharacterSize(20);
+	m_scoreText.setFont(m_game->getAssets().getFont("Pixel"));
+	m_scoreText.setFillColor(sf::Color::White);
+	m_scoreText.setString("Score: " + std::to_string(m_score));
+
 	sf::View view = m_game->window().getView();
 	view.setSize(width() / 4.0f, height() / 4.0f);
 	m_game->window().setView(view);
-
-	std::cout << "Loading level Scene entities" << std::endl;
+	auto start = std::chrono::high_resolution_clock::now();
 	loadLevel(levelPath);
-	std::cout << "Level Scene init Completed!" << std::endl;
-
+	auto end = std::chrono::high_resolution_clock::now();
+	std::cout << "Time taken to load Scene and its scene entities : " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start) << std::endl;
 }
 
 Vec2 Scene_Play::gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity) const
@@ -78,7 +84,8 @@ void Scene_Play::loadLevel(const std::string& levelPath)
 			auto e = m_entityManager.addEntity(name);
 			e->addComponents<CTransform>(gridToMidPixel(x, y, e));
 			e->addComponents<CAnimation>(m_game->getAssets().getAnimation(name), true);
-			e->addComponents<CBoundingBox>(m_game->getAssets().getAnimation(name).getSize());
+			(name == "Castle") ? e->addComponents<CBoundingBox>(Vec2(0.0f, m_game->getAssets().getAnimation(name).getSize().y * 5.0f))
+				: e->addComponents<CBoundingBox>(m_game->getAssets().getAnimation(name).getSize());
 		}
 		else if (text == "Dec")
 		{
@@ -123,8 +130,14 @@ void Scene_Play::spawnBullet(std::shared_ptr<Entity>& e)
 	auto& bulletTransform = b->addComponents<CTransform>(ePos);
 	b->addComponents<CAnimation>(m_game->getAssets().getAnimation(name), true);
 	b->addComponents<CBoundingBox>(m_game->getAssets().getAnimation(name).getSize() / 2);
+	b->addComponents<CGravity>(m_playerConfig.GRAVITY);
 	bulletTransform.velocity.x = -1 * e->getComponent<CTransform>().scale.x * m_playerConfig.SPEED * 3;
 	b->addComponents<CLifeSpan>(1.832);
+	// flip the bullet texture
+	if (e->getComponent<CTransform>().scale.x > 0)
+	{
+		b->getComponent<CTransform>().scale.x = -1.0f;
+	}
 }
 
 void Scene_Play::update()
@@ -244,11 +257,34 @@ void Scene_Play::sCollision()
 			auto& pPrevPos = m_player->getComponent<CTransform>().prevPos;
 			const std::string& name = e->getComponent<CAnimation>().animation.getName();
 
-			// destory coin upon collision with player
-			if (name == "Coin")
+			// player and castle collosion
+			if (name == "Castle")
+			{
+				m_player->destroy();
+				onLevelEnd();
+			}
+
+			// player reward collosion
+			if (name == "Coin" || name == "Star")
 			{
 				e->destroy();
+				m_score += name == "Coin" ? 75 : 125;
 			}
+
+			if (name == "MushroomR")
+			{
+				// need to add some effects up on collision
+				e->destroy();
+			}
+
+			if (name == "MushroomG")
+			{
+				// need to add some effects up on collision
+				e->destroy();
+			}
+
+			// update score
+			m_scoreText.setString("Score: " + std::to_string(m_score));
 
 			if (prevOverlap.y > 0.0f)
 			{
@@ -266,10 +302,20 @@ void Scene_Play::sCollision()
 						e->addComponents<CAnimation>(m_game->getAssets().getAnimation("Question2"), true);
 						Vec2 pos = e->getComponent<CTransform>().pos;
 						pos.y -= 16.5;
-						auto eCoin = m_entityManager.addEntity("Coin");
+						// Seed the random number generator
+						std::random_device rd;
+						std::mt19937 gen(rd());
+
+						// Choose a random index from 0 to vec.size() - 1
+						std::uniform_int_distribution<> dis(0, m_rewards.size() - 1);
+						int randomIndex = dis(gen);
+
+						// Get the random element from the vector
+						std::string eName = m_rewards[randomIndex];
+						auto eCoin = m_entityManager.addEntity(eName);
 						eCoin->addComponents<CTransform>(pos);
-						eCoin->addComponents<CAnimation>(m_game->getAssets().getAnimation("Coin"), true);
-						eCoin->addComponents<CBoundingBox>(m_game->getAssets().getAnimation("Coin").getSize());
+						eCoin->addComponents<CAnimation>(m_game->getAssets().getAnimation(eName), true);
+						eCoin->addComponents<CBoundingBox>(m_game->getAssets().getAnimation(eName).getSize());
 					}
 					else if (name == "Brick")
 					{
@@ -406,6 +452,13 @@ void Scene_Play::sRender()
 		m_game->window().clear(sf::Color(58, 58, 100));
 	}
 
+	sf::View originalView = m_game->window().getView();
+	sf::View uiView(sf::FloatRect(0, 0, m_game->window().getSize().x, m_game->window().getSize().y));
+	m_game->window().setView(uiView);
+	m_scoreText.setPosition(10, 10);
+	m_game->window().draw(m_scoreText);
+	m_game->window().setView(originalView);
+
 	auto& pPos = m_player->getComponent<CTransform>().pos;
 	sf::View view = m_game->window().getView();
 	float windowCenterX = std::max(view.getSize().x / 2.0f, pPos.x);
@@ -435,12 +488,13 @@ void Scene_Play::sRender()
 		{
 			if (e->hasComponent<CBoundingBox>())
 			{
+				auto& name = e->getComponent<CAnimation>().animation.getName();
 				auto& box = e->getComponent<CBoundingBox>();
 				auto& transform = e->getComponent<CTransform>();
 				sf::RectangleShape rect;
 				rect.setSize(sf::Vector2f(box.size.x - 1, box.size.y - 1));
-				rect.setOrigin(sf::Vector2f(box.halfSize.x, box.halfSize.y));
 				rect.setPosition(transform.pos.x, transform.pos.y);
+				rect.setOrigin(sf::Vector2f(box.halfSize.x, box.halfSize.y));
 				rect.setFillColor(sf::Color::Transparent);
 				rect.setOutlineColor(sf::Color::White);
 				rect.setOutlineThickness(1.0f);
@@ -502,6 +556,11 @@ void Scene_Play::sDoAction(const Action& action)
 		else if (action.name() == "LEFT")	{ input.left = false; }
 		else if (action.name() == "FIRE")   { input.shoot = false; }
 	}
+}
+
+void Scene_Play::onLevelEnd()
+{
+	m_game->changeScene("MENU", nullptr, true);
 }
 
 void Scene_Play::onEnd()

@@ -45,15 +45,10 @@
     <Image Include="assets\textures\mario_assets\piranha-0.png" />
     <Image Include="assets\textures\mario_assets\piranha-1.png" />
     <Image Include="assets\textures\mario_assets\qfade.png" />
-    <Image Include="assets\textures\mario_assets\question2.png" />
     <Image Include="assets\textures\mario_assets\secret-box.png" />
     <Image Include="assets\textures\mario_assets\star.png" />
     <Image Include="assets\textures\mario_assets\turtle-fly-0.png" />
     <Image Include="assets\textures\mario_assets\turtle-fly-1.png" />
-    <Image Include="assets\textures\mario_assets\turtle-turtleback-0.png" />
-    <Image Include="assets\textures\mario_assets\turtle-turtleback-1.png" />
-    <Image Include="assets\textures\mario_assets\turtle-walk-0.png" />
-    <Image Include="assets\textures\mario_assets\turtle-walk-1.png" />
     <Image Include="assets\textures\mario_assets\wall.png" />
     <Image Include="assets\textures\mario_assets\flag.png" />
     <Image Include="assets\textures\mario_assets\solid.png" />
@@ -67,10 +62,14 @@
     <Image Include="assets\textures\megaman\marioRunning.jpeg" />
     <Image Include="assets\textures\megaman\air64S.png" />
     <Image Include="assets\textures\marioCharacter\marioSmallStand.png" />
-    <Image Include="assets\textures\marioCharacter\BulletNew.png" />
     <Image Include="assets\textures\marioCharacter\marioSmallAir.png" />
     <Image Include="assets\textures\marioCharacter\marioSmallRun.png" />
     <Image Include="assets\textures\marioCharacter\marioSmallShoot.png" />
+    <Image Include="assets\textures\mario_assets\mushroom-green.png" />
+    <Image Include="assets\textures\mario_assets\turtle.png" />
+    <Image Include="assets\textures\mario_assets\owlDead.png" />
+    <Image Include="assets\textures\mario_assets\owl.png" />
+    <Image Include="assets\textures\marioCharacter\BulletNewS.png" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
