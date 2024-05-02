@@ -42,8 +42,6 @@
     <Image Include="assets\textures\mario_assets\pipe-big.png" />
     <Image Include="assets\textures\mario_assets\pipe-med.png" />
     <Image Include="assets\textures\mario_assets\pipe-small.png" />
-    <Image Include="assets\textures\mario_assets\piranha-0.png" />
-    <Image Include="assets\textures\mario_assets\piranha-1.png" />
     <Image Include="assets\textures\mario_assets\qfade.png" />
     <Image Include="assets\textures\mario_assets\secret-box.png" />
     <Image Include="assets\textures\mario_assets\star.png" />
@@ -70,6 +68,8 @@
     <Image Include="assets\textures\mario_assets\owlDead.png" />
     <Image Include="assets\textures\mario_assets\owl.png" />
     <Image Include="assets\textures\marioCharacter\BulletNewS.png" />
+    <Image Include="assets\textures\mario_assets\piranha_up.png" />
+    <Image Include="assets\textures\mario_assets\piranhaNew.png" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />

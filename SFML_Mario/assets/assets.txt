@@ -31,11 +31,13 @@ Texture   TexExplosion  assets/textures/mario_assets/explosionS.png
 Texture   TexOwl        assets/textures/mario_assets/owl.png
 Texture   TexOwlDead    assets/textures/mario_assets/owlDead.png
 Texture   TexTurtle     assets/textures/mario_assets/turtle.png
+Texture   TexPiranha    assets/textures/mario_assets/piranhaNew.png
 Animation MarioStand      TexStand        2     10
 Animation MarioRun        TexRun          3     10
 Animation MarioAir        TexAir          1     0
 Animation MarioStandShoot TexShoot        1     0
 Animation Turtle		  TexTurtle       2     10
+Animation Piranha		  TexPiranha	  10    5
 Animation Owl		      TexOwl          2     10
 Animation TexOwlDead      TexOwlDead      1     0
 Animation Bullet          TexBullet       2     10

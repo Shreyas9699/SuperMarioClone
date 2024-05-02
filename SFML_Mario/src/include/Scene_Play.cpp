@@ -140,8 +140,84 @@ void Scene_Play::spawnBullet(std::shared_ptr<Entity>& e)
 	}
 }
 
+void Scene_Play::spawnEnemy()
+{
+	std::cout << "Creating enemy\n";
+	spawnPiranha();
+	spawnOwl();
+}
+
+void Scene_Play::spawnPiranha() {
+	std::cout << "Creating Piranha\n";
+	std::vector<std::string> pipeTypes = { "PipeB", "PipeS", "PipeM" };
+	std::vector<int> pipeXPositions;
+	std::vector<int> pipeYPositions;
+
+	// Find all pipe positions
+	for (const auto& entity : m_entityManager.getEntities()) {
+		if (entity->hasComponent<CTransform>() && entity->hasComponent<CBoundingBox>() && entity->hasComponent<CAnimation>()) {
+			const auto& animation = entity->getComponent<CAnimation>().animation;
+			if (std::find(pipeTypes.begin(), pipeTypes.end(), animation.getName()) != pipeTypes.end()) {
+				pipeXPositions.push_back(entity->getComponent<CTransform>().pos.x);
+				auto y = entity->getComponent<CTransform>().pos.y;
+				if (animation.getName() == "PipeB")
+				{
+					y += 0.5f;
+				}
+				else if (animation.getName() == "PipeS")
+				{
+					y -= 0.5f;
+				}
+				pipeYPositions.push_back(y);
+			}
+		}
+	}
+
+	// Spawn Piranha on random pipe positions
+	if (!pipeXPositions.empty()) {
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_int_distribution<> dis(0, pipeXPositions.size() - 1);
+		int randomIndex = dis(gen);
+
+		auto piranha = m_entityManager.addEntity("Piranha");
+		piranha->addComponents<CTransform>(Vec2(pipeXPositions[randomIndex], pipeYPositions[randomIndex] - 32));
+		piranha->addComponents<CAnimation>(m_game->getAssets().getAnimation("Piranha"), true);
+		piranha->addComponents<CBoundingBox>(m_game->getAssets().getAnimation("Piranha").getSize());
+	}
+}
+
+void Scene_Play::spawnOwl() {
+	std::cout << "Creating Owl\n";
+	std::vector<int> groundXPositions;
+
+	// Find all ground positions
+	for (const auto& entity : m_entityManager.getEntities()) {
+		if (entity->hasComponent<CTransform>() && entity->hasComponent<CBoundingBox>() && entity->hasComponent<CAnimation>()) {
+			const auto& animation = entity->getComponent<CAnimation>().animation;
+			if (animation.getName() == "Ground") {
+				groundXPositions.push_back(entity->getComponent<CTransform>().pos.x);
+			}
+		}
+	}
+
+	// Spawn Owl on random ground positions
+	if (!groundXPositions.empty()) {
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_int_distribution<> dis(0, groundXPositions.size() - 1);
+		int randomIndex = dis(gen);
+
+		auto owl = m_entityManager.addEntity("Owl");
+		owl->addComponents<CTransform>(Vec2(groundXPositions[randomIndex], -64));
+		owl->addComponents<CAnimation>(m_game->getAssets().getAnimation("Owl"), true);
+		owl->addComponents<CBoundingBox>(m_game->getAssets().getAnimation("Piranha").getSize());
+	}
+}
+
 void Scene_Play::update()
 {
+	spawnEnemy();
 	m_entityManager.update();
 
 	m_StateChanged = false;
@@ -256,6 +332,13 @@ void Scene_Play::sCollision()
 			auto& qPos = e->getComponent<CTransform>().pos;
 			auto& pPrevPos = m_player->getComponent<CTransform>().prevPos;
 			const std::string& name = e->getComponent<CAnimation>().animation.getName();
+
+			// player and Enemy collosion
+			if (name == "Piranha")
+			{
+				m_player->destroy();
+				spawnPlayer();
+			}
 
 			// player and castle collosion
 			if (name == "Castle")

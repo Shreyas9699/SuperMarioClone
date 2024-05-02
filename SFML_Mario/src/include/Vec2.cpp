@@ -66,7 +66,7 @@ Vec2 Vec2::operator *= (const float val)
     return *this;
 }
 
-float  Vec2::dist(const Vec2& rhs) const
+float Vec2::dist(const Vec2& rhs) const
 {
     // Using Pythagorus Dist = sqrtf(D.x*D.x + D.y*D.y) 
     float dx = x - rhs.x;

@@ -29,6 +29,9 @@ class Scene_Play : public Scene
 	Vec2 gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity) const;
 	void loadLevel(const std::string& filePath);
 	void spawnPlayer();
+	void spawnPiranha();
+	void spawnOwl();
+	void spawnEnemy();
 	void spawnBullet(std::shared_ptr<Entity>& entity);
 	void onLevelEnd();
 	void onEnd();

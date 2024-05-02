@@ -204,9 +204,9 @@
     <Image Include="assets\textures\mario_assets\pipe-big.png" />
     <Image Include="assets\textures\mario_assets\pipe-med.png" />
     <Image Include="assets\textures\mario_assets\pipe-small.png" />
-    <Image Include="assets\textures\mario_assets\piranha-0.png" />
-    <Image Include="assets\textures\mario_assets\piranha-1.png" />
     <Image Include="assets\textures\mario_assets\piranha.png" />
+    <Image Include="assets\textures\mario_assets\piranhaNew.png" />
+    <Image Include="assets\textures\mario_assets\piranha_up.png" />
     <Image Include="assets\textures\mario_assets\qfade.png" />
     <Image Include="assets\textures\mario_assets\secret-box.png" />
     <Image Include="assets\textures\mario_assets\solid.png" />
