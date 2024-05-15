@@ -23,7 +23,7 @@ Dec		CloudBig 	 91  20
 Dec		BushBig 	 58  0.5
 Dec		BushBig 	 118  0.5
 Dec		CloudBig 	 115 10
-Tile	Castle 		 153 3.5
+Dec		Castle 		 153 3.5
 Tile	PipeB        15  3
 Tile    PipeS        35  2
 Tile    PipeM        51  2.5
@@ -206,7 +206,17 @@ Tile	Ground       143 0.5
 Tile	Ground       144 0.5
 Tile	Ground       145 0.5
 Tile	Ground       146 0.5
-Tile    Pole		 147.2 5.7
+Tile    Pole         147  2.5
+Tile    Pole         147  3.5
+Tile    Pole         147  4.5
+Tile    Pole         147  5.5
+Tile    Pole         147  6.5
+Tile    Pole         147  7.5
+Tile    Pole         147  8.5
+Tile    Pole         147  9.5
+Tile    Pole         147  10.5
+Tile    Flag         146.5  10.7
+Tile    FlagTop      147  11.5
 Tile	Ground       147 0.5
 Tile	Ground       148 0.5
 Tile	Ground       149 0.5
@@ -217,5 +227,4 @@ Tile	Ground       153 0.5
 Tile	Ground       154 0.5
 Tile	Ground       155 0.5
 Tile    Block        147 1.5
-Tile    Block        148 1.5
-Player  2 6 16 16 10 10 15 0.8 Buster
+Player  2 6 16 16 5 8 15 0.8 Buster

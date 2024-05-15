@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <memory>
+#include <chrono>
 #include "Entity.h"
 #include "Scene.h"
 
@@ -22,6 +23,9 @@ class Scene_Play : public Scene
 	sf::Text				m_gridText;
 	long int				m_score = 0;
 	sf::Text				m_scoreText;
+	sf::Text				m_timerText;
+	std::chrono::time_point<std::chrono::high_resolution_clock> startTimer;
+	std::chrono::time_point<std::chrono::high_resolution_clock> pauseStartTime = std::chrono::high_resolution_clock::now();;
 	
 	std::vector<std::string> m_rewards = { "Coin", "Star", "MushroomR", "MushroomG" };
 

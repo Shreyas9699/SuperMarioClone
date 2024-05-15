@@ -59,10 +59,7 @@
     <Image Include="assets\textures\mario_assets\explosionS.png" />
     <Image Include="assets\textures\megaman\marioRunning.jpeg" />
     <Image Include="assets\textures\megaman\air64S.png" />
-    <Image Include="assets\textures\marioCharacter\marioSmallStand.png" />
-    <Image Include="assets\textures\marioCharacter\marioSmallAir.png" />
-    <Image Include="assets\textures\marioCharacter\marioSmallRun.png" />
-    <Image Include="assets\textures\marioCharacter\marioSmallShoot.png" />
+    <Image Include="assets\textures\marioCharacter\MarioRun.png" />
     <Image Include="assets\textures\mario_assets\mushroom-green.png" />
     <Image Include="assets\textures\mario_assets\turtle.png" />
     <Image Include="assets\textures\mario_assets\owlDead.png" />
@@ -70,6 +67,14 @@
     <Image Include="assets\textures\marioCharacter\BulletNewS.png" />
     <Image Include="assets\textures\mario_assets\piranha_up.png" />
     <Image Include="assets\textures\mario_assets\piranhaNew.png" />
+    <Image Include="assets\sheet.png" />
+    <Image Include="assets\textures\marioCharacter\MarioDead.png" />
+    <Image Include="assets\textures\marioCharacter\MarioStand.png" />
+    <Image Include="assets\textures\marioCharacter\MarioAir.png" />
+    <Image Include="assets\textures\mario_assets\FlagClimb.png" />
+    <Image Include="assets\textures\mario_assets\FLAG_TOP.png" />
+    <Image Include="assets\textures\mario_assets\FLAG_POLE.png" />
+    <Image Include="assets\textures\mario_assets\flagPole.png" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
@@ -84,6 +89,7 @@
     <ClCompile Include="src\include\Scene_Menu.cpp" />
     <ClCompile Include="src\include\Scene_Play.cpp" />
     <ClCompile Include="src\include\Vec2.cpp" />
+    <ClCompile Include="src\include\TextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\include\Action.h" />
@@ -99,6 +105,7 @@
     <ClInclude Include="src\include\Scene_Menu.h" />
     <ClInclude Include="src\include\Scene_Play.h" />
     <ClInclude Include="src\include\Vec2.h" />
+    <ClInclude Include="src\include\TextureManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="assets\fonts\Techno.ttf" />
@@ -111,5 +118,6 @@
     <Font Include="assets\fonts\pixeled.ttf" />
     <Font Include="assets\fonts\Freedom.ttf" />
     <Font Include="assets\fonts\dogica.ttf" />
+    <Font Include="assets\fonts\font.ttf" />
   </ItemGroup>
 </Project>

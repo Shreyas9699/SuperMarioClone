@@ -157,11 +157,12 @@
     <Text Include="assets\levels\level3.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="assets\sheet.png" />
     <Image Include="assets\textures\marioCharacter\BulletNewS.png" />
-    <Image Include="assets\textures\marioCharacter\marioSmallAir.png" />
-    <Image Include="assets\textures\marioCharacter\marioSmallRun.png" />
-    <Image Include="assets\textures\marioCharacter\marioSmallShoot.png" />
-    <Image Include="assets\textures\marioCharacter\marioSmallStand.png" />
+    <Image Include="assets\textures\marioCharacter\MarioAir.png" />
+    <Image Include="assets\textures\marioCharacter\MarioDead.png" />
+    <Image Include="assets\textures\marioCharacter\MarioRun.png" />
+    <Image Include="assets\textures\marioCharacter\MarioStand.png" />
     <Image Include="assets\textures\mario\block.png" />
     <Image Include="assets\textures\mario\brick.png" />
     <Image Include="assets\textures\mario\bushbig.png" />
@@ -193,6 +194,10 @@
     <Image Include="assets\textures\mario_assets\explosion.png" />
     <Image Include="assets\textures\mario_assets\explosionS.png" />
     <Image Include="assets\textures\mario_assets\flag.png" />
+    <Image Include="assets\textures\mario_assets\FlagClimb.png" />
+    <Image Include="assets\textures\mario_assets\flagPole.png" />
+    <Image Include="assets\textures\mario_assets\FLAG_POLE.png" />
+    <Image Include="assets\textures\mario_assets\FLAG_TOP.png" />
     <Image Include="assets\textures\mario_assets\flower.png" />
     <Image Include="assets\textures\mario_assets\ground.png" />
     <Image Include="assets\textures\mario_assets\hill-big.png" />
@@ -232,6 +237,7 @@
     <ClCompile Include="src\include\Scene.cpp" />
     <ClCompile Include="src\include\Scene_Menu.cpp" />
     <ClCompile Include="src\include\Scene_Play.cpp" />
+    <ClCompile Include="src\include\TextureManager.cpp" />
     <ClCompile Include="src\include\Vec2.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
@@ -248,12 +254,14 @@
     <ClInclude Include="src\include\Scene.h" />
     <ClInclude Include="src\include\Scene_Menu.h" />
     <ClInclude Include="src\include\Scene_Play.h" />
+    <ClInclude Include="src\include\TextureManager.h" />
     <ClInclude Include="src\include\Vec2.h" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="assets\fonts\ArialRegular.ttf" />
     <Font Include="assets\fonts\CourierNew.ttf" />
     <Font Include="assets\fonts\dogica.ttf" />
+    <Font Include="assets\fonts\font.ttf" />
     <Font Include="assets\fonts\Freedom.ttf" />
     <Font Include="assets\fonts\Mega-Man-Battle-Network.ttf" />
     <Font Include="assets\fonts\pixeled.ttf" />

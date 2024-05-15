@@ -1,7 +1,7 @@
-Texture   TexStand      assets/textures/marioCharacter/marioSmallStand.png
-Texture   TexRun        assets/textures/marioCharacter/marioSmallRun.png
-Texture   TexAir        assets/textures/marioCharacter/marioSmallAir.png
-Texture   TexShoot      assets/textures/marioCharacter/marioSmallShoot.png
+Texture   TexStand      assets/textures/marioCharacter/MarioStand.png
+Texture   TexRun        assets/textures/marioCharacter/MarioRun.png
+Texture   TexAir        assets/textures/marioCharacter/MarioAir.png
+Texture   TexDead       assets/textures/marioCharacter/MarioDead.png
 Texture   TexBullet     assets/textures/marioCharacter/BulletNewS.png
 Texture   TexCoin       assets/textures/mario_assets/coinspin.png
 Texture   TexStar       assets/textures/mario_assets/star.png
@@ -23,7 +23,9 @@ Texture   TexGround     assets/textures/mario_assets/wall.png
 Texture   TexBlock      assets/textures/mario_assets/block.png
 Texture   TexCastle     assets/textures/mario_assets/castle.png
 Texture   TexSolid      assets/textures/mario_assets/solid.png
-Texture   TexPole       assets/textures/mario_assets/flag.png
+Texture   TexFlag       assets/textures/mario_assets/flag.png
+Texture   TexFlagTop    assets/textures/mario_assets/FLAG_TOP.png
+Texture   TexFlagPole   assets/textures/mario_assets/FLAG_POLE.png
 Texture   TexCastle     assets/textures/mario_assets/castle.png
 Texture   TexHillBig    assets/textures/mario_assets/hill-big.png
 Texture   TexHillSmall  assets/textures/mario_assets/hill-small.png
@@ -32,10 +34,10 @@ Texture   TexOwl        assets/textures/mario_assets/owl.png
 Texture   TexOwlDead    assets/textures/mario_assets/owlDead.png
 Texture   TexTurtle     assets/textures/mario_assets/turtle.png
 Texture   TexPiranha    assets/textures/mario_assets/piranhaNew.png
-Animation MarioStand      TexStand        2     10
+Animation MarioStand      TexStand        1     0
 Animation MarioRun        TexRun          3     10
 Animation MarioAir        TexAir          1     0
-Animation MarioStandShoot TexShoot        1     0
+Animation MarioDead		  TexDead		  1     0
 Animation Turtle		  TexTurtle       2     10
 Animation Piranha		  TexPiranha	  10    5
 Animation Owl		      TexOwl          2     10
@@ -63,7 +65,9 @@ Animation HillSmall       TexHillSmall    1     0
 Animation Ground          TexGround       1     0
 Animation Block           TexBlock        1     0
 Animation Solid           TexSolid        1     0
-Animation Pole	          TexPole         1     0
+Animation Pole	          TexFlagPole     1     0
+Animation Flag	          TexFlag         1     0
+Animation FlagTop	      TexFlagTop      1     0
 Animation Castle	      TexCastle       1     0
 Font      Tech          assets/fonts/Techno.ttf
 Font      Mario         assets/fonts/RetroMario-Regular.otf
@@ -72,3 +76,4 @@ Font      Arial         assets/fonts/ArialRegular.ttf
 Font      Freedom       assets/fonts/Freedom.ttf
 Font      dogica        assets/fonts/dogica.ttf
 Font      Pixel         assets/fonts/pixeled.ttf
+Font      Mario         assets/fonts/font.ttf

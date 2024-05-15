@@ -1,6 +1,5 @@
 #include <fstream>
 #include <random>
-#include <chrono>
 #include "Scene_Play.h"
 #include "GameEngine.h"
 #include "Physics.h"
@@ -30,10 +29,15 @@ void Scene_Play::init(const std::string& levelPath)
 	m_gridText.setCharacterSize(2);
 	m_gridText.setFont(m_game->getAssets().getFont("dogica"));
 
-	m_scoreText.setCharacterSize(20);
-	m_scoreText.setFont(m_game->getAssets().getFont("Pixel"));
+	// Game Score
+	m_scoreText.setCharacterSize(30);
+	m_scoreText.setFont(m_game->getAssets().getFont("Mario"));
 	m_scoreText.setFillColor(sf::Color::White);
-	m_scoreText.setString("Score: " + std::to_string(m_score));
+
+	// Level Timre
+	m_timerText.setCharacterSize(30);
+	m_timerText.setFont(m_game->getAssets().getFont("Mario"));
+	m_timerText.setFillColor(sf::Color::White);
 
 	sf::View view = m_game->window().getView();
 	view.setSize(width() / 4.0f, height() / 4.0f);
@@ -53,10 +57,10 @@ Vec2 Scene_Play::gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity
 		The size of the grid width and height is stored in m_gridSize.x and m_gridSize.y 
 		The up-left corner of the Animation should align with the bottom left of the grid cell
 	*/
-	float x, y;
-	x = (gridX * m_gridSize.x) + (entity->getComponent<CAnimation>().animation.getSize().x );
-	y = height() - (gridY * m_gridSize.y) - (entity->getComponent<CAnimation>().animation.getSize().y);
-	return Vec2(x, y);
+	float b1x = gridX * m_gridSize.x;
+	float b1y = height() - (gridY * m_gridSize.y);
+	Vec2 size = entity->getComponent<CAnimation>().animation.getSize();
+	return Vec2(b1x + size.x / 2.0f, b1y - size.y / 2.0f);
 }
 
 void Scene_Play::loadLevel(const std::string& levelPath)
@@ -84,8 +88,8 @@ void Scene_Play::loadLevel(const std::string& levelPath)
 			auto e = m_entityManager.addEntity(name);
 			e->addComponents<CTransform>(gridToMidPixel(x, y, e));
 			e->addComponents<CAnimation>(m_game->getAssets().getAnimation(name), true);
-			(name == "Castle") ? e->addComponents<CBoundingBox>(Vec2(0.0f, m_game->getAssets().getAnimation(name).getSize().y * 5.0f))
-				: e->addComponents<CBoundingBox>(m_game->getAssets().getAnimation(name).getSize());
+			e->addComponents<CBoundingBox>(m_game->getAssets().getAnimation(name).getSize());
+			//e->addComponents<CBoundingBox>(Vec2(0.0f, m_game->getAssets().getAnimation(name).getSize().y * 5.0f))
 		}
 		else if (text == "Dec")
 		{
@@ -106,15 +110,19 @@ void Scene_Play::loadLevel(const std::string& levelPath)
 				 >> m_playerConfig.WEAPON;
 		}
 	}
+	startTimer = std::chrono::high_resolution_clock::now();
 	spawnPlayer();
 }
 
 void Scene_Play::spawnPlayer()
 {
+	if (m_player) { m_player->destroy(); }
+
 	std::cout << "Creating Player entity\n";
 	m_player = m_entityManager.addEntity("player");
 	m_player->addComponents<CAnimation>(m_game->getAssets().getAnimation("MarioRun"), true);
 	m_player->addComponents<CTransform>(gridToMidPixel(m_playerConfig.X, m_playerConfig.Y, m_player), Vec2(), Vec2(-1.0f, 1.0f), 0.0f);
+	m_player->addComponents<CInput>();
 	m_player->addComponents<CBoundingBox>(Vec2(m_playerConfig.CX, m_playerConfig.CY));
 	m_player->addComponents<CGravity>(m_playerConfig.GRAVITY);
 	std::cout << "Completed creating Player entity\n";
@@ -142,9 +150,9 @@ void Scene_Play::spawnBullet(std::shared_ptr<Entity>& e)
 
 void Scene_Play::spawnEnemy()
 {
-	std::cout << "Creating enemy\n";
+	/*std::cout << "Creating enemy\n";
 	spawnPiranha();
-	spawnOwl();
+	spawnOwl();*/
 }
 
 void Scene_Play::spawnPiranha() {
@@ -162,7 +170,7 @@ void Scene_Play::spawnPiranha() {
 				auto y = entity->getComponent<CTransform>().pos.y;
 				if (animation.getName() == "PipeB")
 				{
-					y += 0.5f;
+					y += 0.3f;
 				}
 				else if (animation.getName() == "PipeS")
 				{
@@ -212,6 +220,7 @@ void Scene_Play::spawnOwl() {
 		owl->addComponents<CTransform>(Vec2(groundXPositions[randomIndex], -64));
 		owl->addComponents<CAnimation>(m_game->getAssets().getAnimation("Owl"), true);
 		owl->addComponents<CBoundingBox>(m_game->getAssets().getAnimation("Piranha").getSize());
+		owl->addComponents<CGravity>(m_playerConfig.GRAVITY);
 	}
 }
 
@@ -267,14 +276,6 @@ void Scene_Play::sMovement()
 		if (m_player->getComponent<CState>().state != "MarioRun")
 		{
 			m_player->getComponent<CState>().state = "MarioRun";
-			m_StateChanged = true;
-		}
-	}
-	if (input.shoot)
-	{
-		if (m_player->getComponent<CState>().state != "MarioStandShoot")
-		{
-			m_player->getComponent<CState>().state = "MarioStandShoot";
 			m_StateChanged = true;
 		}
 	}
@@ -366,9 +367,6 @@ void Scene_Play::sCollision()
 				e->destroy();
 			}
 
-			// update score
-			m_scoreText.setString("Score: " + std::to_string(m_score));
-
 			if (prevOverlap.y > 0.0f)
 			{
 				pPos.x += pPrevPos.x < qPos.x ? -overlap.x : overlap.x;
@@ -382,7 +380,7 @@ void Scene_Play::sCollision()
 					const std::string& name = e->getComponent<CAnimation>().animation.getName();
 					if (name == "Question")
 					{
-						e->addComponents<CAnimation>(m_game->getAssets().getAnimation("Question2"), true);
+						e->addComponents<CAnimation>(m_game->getAssets().getAnimation("Solid"), true);
 						Vec2 pos = e->getComponent<CTransform>().pos;
 						pos.y -= 16.5;
 						// Seed the random number generator
@@ -407,6 +405,7 @@ void Scene_Play::sCollision()
 						auto eExplosion = m_entityManager.addEntity("Explosion");
 						eExplosion->addComponents<CTransform>(pos);
 						eExplosion->addComponents<CAnimation>(m_game->getAssets().getAnimation("Explosion"), false);
+						eExplosion->addComponents<CLifeSpan>(1.8);
 					}
 				}
 				else
@@ -471,7 +470,7 @@ void Scene_Play::sCollision()
 							auto eExplosion = m_entityManager.addEntity("Explosion");
 							eExplosion->addComponents<CTransform>(pos);
 							eExplosion->addComponents<CAnimation>(m_game->getAssets().getAnimation("Explosion"), false);
-							
+							eExplosion->addComponents<CLifeSpan>(1.8);
 						}
 						else if (name == "Question" || name == "Question2" || name == "PipeB"
 							|| name == "PipeS" || name == "PipeM" || name == "Block" || name == "Solid" || name == "Coin")
@@ -539,7 +538,13 @@ void Scene_Play::sRender()
 	sf::View uiView(sf::FloatRect(0, 0, m_game->window().getSize().x, m_game->window().getSize().y));
 	m_game->window().setView(uiView);
 	m_scoreText.setPosition(10, 10);
+	m_scoreText.setString("Score: " + std::to_string(m_score)); 
 	m_game->window().draw(m_scoreText);
+	std::string timeString = "Time: " + std::to_string((std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now() - startTimer)).count()) + "s";
+	m_timerText.setString(timeString);
+	sf::FloatRect textRect = m_timerText.getLocalBounds();
+	m_timerText.setPosition(m_game->window().getSize().x - textRect.width - 10, 10);
+	m_game->window().draw(m_timerText);
 	m_game->window().setView(originalView);
 
 	auto& pPos = m_player->getComponent<CTransform>().pos;
