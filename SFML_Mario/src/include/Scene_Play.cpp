@@ -88,8 +88,8 @@ void Scene_Play::loadLevel(const std::string& levelPath)
 			auto e = m_entityManager.addEntity(name);
 			e->addComponents<CTransform>(gridToMidPixel(x, y, e));
 			e->addComponents<CAnimation>(m_game->getAssets().getAnimation(name), true);
-			e->addComponents<CBoundingBox>(m_game->getAssets().getAnimation(name).getSize());
-			//e->addComponents<CBoundingBox>(Vec2(0.0f, m_game->getAssets().getAnimation(name).getSize().y * 5.0f))
+			(name != "Pole") ? e->addComponents<CBoundingBox>(m_game->getAssets().getAnimation(name).getSize()) :
+				e->addComponents<CBoundingBox>(Vec2(0.0f, m_game->getAssets().getAnimation(name).getSize().y));
 		}
 		else if (text == "Dec")
 		{
@@ -108,6 +108,21 @@ void Scene_Play::loadLevel(const std::string& levelPath)
 			file >> m_playerConfig.X >> m_playerConfig.Y >> m_playerConfig.CX >> m_playerConfig.CY
 				 >> m_playerConfig.SPEED >> m_playerConfig.MAXSPEED >> m_playerConfig.JUMP >> m_playerConfig.GRAVITY
 				 >> m_playerConfig.WEAPON;
+		}
+		else if (text == "Goomba")
+		{
+			std::cout << "Creating Goomba Position vector \n";
+			float x, y;
+			while (file >> text && text != "GEND")
+			{
+				std::istringstream ss(text);
+				if (ss >> x)
+				{
+					file >> y;
+					m_goombaPos.push_back(GoombaConfig{ Vec2(x, y) });
+				}
+			}
+			std::cout << "Done Creating Goomba Position vector, total number of differen pos: " << m_goombaPos.size() << std::endl;
 		}
 	}
 	startTimer = std::chrono::high_resolution_clock::now();
@@ -150,77 +165,21 @@ void Scene_Play::spawnBullet(std::shared_ptr<Entity>& e)
 
 void Scene_Play::spawnEnemy()
 {
-	/*std::cout << "Creating enemy\n";
-	spawnPiranha();
-	spawnOwl();*/
+	createGoomba();
 }
 
-void Scene_Play::spawnPiranha() {
-	std::cout << "Creating Piranha\n";
-	std::vector<std::string> pipeTypes = { "PipeB", "PipeS", "PipeM" };
-	std::vector<int> pipeXPositions;
-	std::vector<int> pipeYPositions;
-
-	// Find all pipe positions
-	for (const auto& entity : m_entityManager.getEntities()) {
-		if (entity->hasComponent<CTransform>() && entity->hasComponent<CBoundingBox>() && entity->hasComponent<CAnimation>()) {
-			const auto& animation = entity->getComponent<CAnimation>().animation;
-			if (std::find(pipeTypes.begin(), pipeTypes.end(), animation.getName()) != pipeTypes.end()) {
-				pipeXPositions.push_back(entity->getComponent<CTransform>().pos.x);
-				auto y = entity->getComponent<CTransform>().pos.y;
-				if (animation.getName() == "PipeB")
-				{
-					y += 0.3f;
-				}
-				else if (animation.getName() == "PipeS")
-				{
-					y -= 0.5f;
-				}
-				pipeYPositions.push_back(y);
-			}
-		}
-	}
-
-	// Spawn Piranha on random pipe positions
-	if (!pipeXPositions.empty()) {
-		std::random_device rd;
-		std::mt19937 gen(rd());
-		std::uniform_int_distribution<> dis(0, pipeXPositions.size() - 1);
-		int randomIndex = dis(gen);
-
-		auto piranha = m_entityManager.addEntity("Piranha");
-		piranha->addComponents<CTransform>(Vec2(pipeXPositions[randomIndex], pipeYPositions[randomIndex] - 32));
-		piranha->addComponents<CAnimation>(m_game->getAssets().getAnimation("Piranha"), true);
-		piranha->addComponents<CBoundingBox>(m_game->getAssets().getAnimation("Piranha").getSize());
-	}
-}
-
-void Scene_Play::spawnOwl() {
-	std::cout << "Creating Owl\n";
-	std::vector<int> groundXPositions;
-
-	// Find all ground positions
-	for (const auto& entity : m_entityManager.getEntities()) {
-		if (entity->hasComponent<CTransform>() && entity->hasComponent<CBoundingBox>() && entity->hasComponent<CAnimation>()) {
-			const auto& animation = entity->getComponent<CAnimation>().animation;
-			if (animation.getName() == "Ground") {
-				groundXPositions.push_back(entity->getComponent<CTransform>().pos.x);
-			}
-		}
-	}
-
-	// Spawn Owl on random ground positions
-	if (!groundXPositions.empty()) {
-		std::random_device rd;
-		std::mt19937 gen(rd());
-		std::uniform_int_distribution<> dis(0, groundXPositions.size() - 1);
-		int randomIndex = dis(gen);
-
-		auto owl = m_entityManager.addEntity("Owl");
-		owl->addComponents<CTransform>(Vec2(groundXPositions[randomIndex], -64));
-		owl->addComponents<CAnimation>(m_game->getAssets().getAnimation("Owl"), true);
-		owl->addComponents<CBoundingBox>(m_game->getAssets().getAnimation("Piranha").getSize());
-		owl->addComponents<CGravity>(m_playerConfig.GRAVITY);
+void Scene_Play::createGoomba()
+{
+	if (!Gbflg)
+	{
+		std::cout << "Creating Goomba entity\n";
+		auto goomba = m_entityManager.addEntity("Goomba");
+		goomba->addComponents<CAnimation>(m_game->getAssets().getAnimation("Goomba"), true);
+		goomba->addComponents<CTransform>(gridToMidPixel(15.0f, 9.0f, goomba), Vec2(GoombaSPEED, 0.0f), Vec2(1.0f, 1.0f), 0.0f);
+		goomba->addComponents<CBoundingBox>(m_game->getAssets().getAnimation("Goomba").getSize());
+		goomba->addComponents<CGravity>(m_playerConfig.GRAVITY);
+		std::cout << "Completed creating Goomba entity\n";
+		Gbflg = !Gbflg;
 	}
 }
 
@@ -295,6 +254,31 @@ void Scene_Play::sMovement()
 	{
 		e->getComponent<CTransform>().pos += e->getComponent<CTransform>().velocity;
 	}
+
+	for (auto& goomba : m_entityManager.getEntities("Goomba"))
+	{
+		auto& transform = goomba->getComponent<CTransform>();
+
+		// Apply gravity
+		transform.velocity.y += goomba->getComponent<CGravity>().gravity;
+
+		// Cap the vertical velocity
+		if (transform.velocity.y >= m_playerConfig.MAXSPEED)
+		{
+			transform.velocity.y = m_playerConfig.MAXSPEED;
+		}
+
+		// Ensure Goomba moves left or right
+		if (transform.velocity.x == 0.0f)
+		{
+			transform.velocity.x = GoombaSPEED; // Set initial direction to move right
+		}
+
+		// Update the position based on velocity
+		transform.prevPos = transform.pos;
+		transform.pos += transform.velocity;
+	}
+
 }
 
 void Scene_Play::sLifeSpan()
@@ -319,6 +303,7 @@ void Scene_Play::sCollision()
 	auto& pPos = m_player->getComponent<CTransform>().pos;
 	bool hasCollision = false;
 
+	// Player
 	for (auto& e : m_entityManager.getEntities())
 	{
 		if (!e->hasComponent<CBoundingBox>() || !e->hasComponent<CTransform>() || e == m_player)
@@ -342,7 +327,7 @@ void Scene_Play::sCollision()
 			}
 
 			// player and castle collosion
-			if (name == "Castle")
+			if (name == "Pole")
 			{
 				m_player->destroy();
 				onLevelEnd();
@@ -435,9 +420,10 @@ void Scene_Play::sCollision()
 
 	if (pPos.x < 0.0f)
 	{
-		pPos.x = 0.0f;
+		pPos.x = 1.5f;
 	}
 
+	// Bullet
 	for (auto& eb : m_entityManager.getEntities("Bullet"))
 	{
 		auto& bPos = eb->getComponent<CTransform>().pos;
@@ -499,6 +485,60 @@ void Scene_Play::sCollision()
 							eb->destroy();
 						}
 					}
+				}
+			}
+		}
+	}
+
+	// Goomba
+	for (auto& goomba : m_entityManager.getEntities("Goomba"))
+	{
+		auto& gPos = goomba->getComponent<CTransform>().pos;
+
+		for (auto& e : m_entityManager.getEntities())
+		{
+			if (!e->hasComponent<CBoundingBox>() || !e->hasComponent<CTransform>() || e == goomba)
+			{
+				continue;
+			}
+			Vec2 overlap = Physics::GetOverlap(e, goomba);
+			Vec2 prevOverlap = Physics::GetPreviousOverlap(e, goomba);
+
+			if (!(overlap.x < 0.0f || overlap.y < 0.0f))
+			{
+				auto& ePos = e->getComponent<CTransform>().pos;
+				auto& gPrevPos = goomba->getComponent<CTransform>().prevPos;
+				const std::string& name = e->getComponent<CAnimation>().animation.getName();
+
+				// Similar collision responses as the player
+				if (prevOverlap.y > 0.0f)
+				{
+					gPos.x += gPrevPos.x < ePos.x ? -overlap.x : overlap.x;
+					// Change direction upon horizontal collision
+					goomba->getComponent<CTransform>().velocity.x *= -1;
+				}
+				if (prevOverlap.x > 0.0f)
+				{
+					if (gPrevPos.y > ePos.y)
+					{
+						gPos.y += overlap.y;
+					}
+					else
+					{
+						gPos.y -= overlap.y;
+					}
+					goomba->getComponent<CTransform>().velocity.y = 0.0f;
+				}
+
+				// Handle falling out of the scene
+				if (gPos.y > height())
+				{
+					goomba->destroy();
+				}
+				if (gPos.x < 0.0f)
+				{
+					gPos.x = 0.0f;
+					goomba->destroy();
 				}
 			}
 		}

@@ -163,6 +163,10 @@
     <Image Include="assets\textures\marioCharacter\MarioDead.png" />
     <Image Include="assets\textures\marioCharacter\MarioRun.png" />
     <Image Include="assets\textures\marioCharacter\MarioStand.png" />
+    <Image Include="assets\textures\marioCharacter\SUPER_MARIO_DUCK.png" />
+    <Image Include="assets\textures\marioCharacter\SUPER_MARIO_JUMP.png" />
+    <Image Include="assets\textures\marioCharacter\SUPER_MARIO_RUN.png" />
+    <Image Include="assets\textures\marioCharacter\SUPER_MARIO_STAND.png" />
     <Image Include="assets\textures\mario\block.png" />
     <Image Include="assets\textures\mario\brick.png" />
     <Image Include="assets\textures\mario\bushbig.png" />
@@ -199,6 +203,8 @@
     <Image Include="assets\textures\mario_assets\FLAG_POLE.png" />
     <Image Include="assets\textures\mario_assets\FLAG_TOP.png" />
     <Image Include="assets\textures\mario_assets\flower.png" />
+    <Image Include="assets\textures\mario_assets\GOOMBA.png" />
+    <Image Include="assets\textures\mario_assets\GOOMBA_CRUSHED.png" />
     <Image Include="assets\textures\mario_assets\ground.png" />
     <Image Include="assets\textures\mario_assets\hill-big.png" />
     <Image Include="assets\textures\mario_assets\hill-small.png" />

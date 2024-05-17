@@ -12,6 +12,12 @@ class Scene_Play : public Scene
 		std::string WEAPON;
 	};
 
+	struct GoombaConfig {
+		Vec2 pos;
+	};
+
+	const float GoombaSPEED = -1.0f;
+
 	std::shared_ptr<Entity>	m_player;
 	std::string				m_levelPath;
 	PlayerConfig			m_playerConfig;
@@ -26,16 +32,16 @@ class Scene_Play : public Scene
 	sf::Text				m_timerText;
 	std::chrono::time_point<std::chrono::high_resolution_clock> startTimer;
 	std::chrono::time_point<std::chrono::high_resolution_clock> pauseStartTime = std::chrono::high_resolution_clock::now();;
-	
+	std::vector<GoombaConfig> m_goombaPos;
 	std::vector<std::string> m_rewards = { "Coin", "Star", "MushroomR", "MushroomG" };
+	bool Gbflg = false;
 
 	void init(const std::string& levelPath); 
 	Vec2 gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity) const;
 	void loadLevel(const std::string& filePath);
 	void spawnPlayer();
-	void spawnPiranha();
-	void spawnOwl();
 	void spawnEnemy();
+	void createGoomba();
 	void spawnBullet(std::shared_ptr<Entity>& entity);
 	void onLevelEnd();
 	void onEnd();

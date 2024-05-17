@@ -16,7 +16,7 @@ void Scene_Menu::init(const std::string& menuConfig)
 	registerAction(sf::Keyboard::Q, "QUIT");
 	registerAction(sf::Keyboard::Escape, "QUIT");
 
-	m_title = "Mega Mario";
+	m_title = "Not Super Mario";
 	m_menuStrings.push_back("Level  1");
 	m_menuStrings.push_back("Level  2");
 	m_menuStrings.push_back("Level  3");
