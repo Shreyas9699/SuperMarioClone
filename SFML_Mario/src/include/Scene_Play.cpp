@@ -119,10 +119,10 @@ void Scene_Play::loadLevel(const std::string& levelPath)
 				if (ss >> x)
 				{
 					file >> y;
-					m_goombaPos.push_back(GoombaConfig{ Vec2(x, y) });
+					m_goombaPositions.push_back(Vec2(x, y));
 				}
 			}
-			std::cout << "Done Creating Goomba Position vector, total number of differen pos: " << m_goombaPos.size() << std::endl;
+			std::cout << "Done Creating Goomba Position vector, total number of differen pos: " << m_goombaPositions.size() << std::endl;
 		}
 	}
 	startTimer = std::chrono::high_resolution_clock::now();
@@ -165,22 +165,42 @@ void Scene_Play::spawnBullet(std::shared_ptr<Entity>& e)
 
 void Scene_Play::spawnEnemy()
 {
-	createGoomba();
+	sf::View currentView = m_game->window().getView();
+
+	float viewL = currentView.getCenter().x - (currentView.getCenter().x / 2.0f);
+	float viewR = currentView.getCenter().x + (currentView.getCenter().x / 2.0f);
+	float viewT = currentView.getCenter().y - (currentView.getCenter().y / 2.0f);
+	float viewB = currentView.getCenter().y + (currentView.getCenter().y / 2.0f);
+	
+	auto dummyGoomba = m_entityManager.addEntity("dummyGoomba");
+	dummyGoomba->addComponents<CAnimation>(m_game->getAssets().getAnimation("Goomba"), false);
+
+	auto it = m_goombaPositions.begin();
+	while (it != m_goombaPositions.end())
+	{
+		Vec2 pixelPos = gridToMidPixel(it->x, it->y, dummyGoomba);
+
+		if (pixelPos.x >= viewL && pixelPos.x <= viewR && pixelPos.y >= viewT && pixelPos.y <= viewB)
+		{
+			createGoomba(*it);
+			it = m_goombaPositions.erase(it);
+		}
+		else
+		{
+			break;
+		}
+	}
+	dummyGoomba->destroy();
 }
 
-void Scene_Play::createGoomba()
+void Scene_Play::createGoomba(const Vec2& position)
 {
-	if (!Gbflg)
-	{
-		std::cout << "Creating Goomba entity\n";
-		auto goomba = m_entityManager.addEntity("Goomba");
-		goomba->addComponents<CAnimation>(m_game->getAssets().getAnimation("Goomba"), true);
-		goomba->addComponents<CTransform>(gridToMidPixel(15.0f, 9.0f, goomba), Vec2(GoombaSPEED, 0.0f), Vec2(1.0f, 1.0f), 0.0f);
-		goomba->addComponents<CBoundingBox>(m_game->getAssets().getAnimation("Goomba").getSize());
-		goomba->addComponents<CGravity>(m_playerConfig.GRAVITY);
-		std::cout << "Completed creating Goomba entity\n";
-		Gbflg = !Gbflg;
-	}
+	std::cout << "Creating Goomba entity at  position " << position << "\n";
+	auto goomba = m_entityManager.addEntity("Goomba");
+	goomba->addComponents<CAnimation>(m_game->getAssets().getAnimation("Goomba"), true);
+	goomba->addComponents<CTransform>(gridToMidPixel(position.x, position.y, goomba), Vec2(GoombaSPEED, 0.0f), Vec2(1.0f, 1.0f), 0.0f);
+	goomba->addComponents<CBoundingBox>(m_game->getAssets().getAnimation("Goomba").getSize());
+	goomba->addComponents<CGravity>(m_playerConfig.GRAVITY);
 }
 
 void Scene_Play::update()
@@ -497,7 +517,8 @@ void Scene_Play::sCollision()
 
 		for (auto& e : m_entityManager.getEntities())
 		{
-			if (!e->hasComponent<CBoundingBox>() || !e->hasComponent<CTransform>() || e == goomba)
+			if (e->getComponent<CAnimation>().animation.getName() == "Goomba" 
+				|| !e->hasComponent<CBoundingBox>() || !e->hasComponent<CTransform>() || e == goomba)
 			{
 				continue;
 			}

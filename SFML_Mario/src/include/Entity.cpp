@@ -20,6 +20,5 @@ const std::string& Entity::tag() const
 
 void Entity::destroy()
 {
-	std::cout << "Player entity is destoryed \n";
 	m_active = false;
 }
