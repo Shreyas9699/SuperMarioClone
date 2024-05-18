@@ -1,5 +1,6 @@
 #include <fstream>
 #include <random>
+#include <thread>
 #include "Scene_Play.h"
 #include "GameEngine.h"
 #include "Physics.h"
@@ -203,6 +204,16 @@ void Scene_Play::createGoomba(const Vec2& position)
 	goomba->addComponents<CGravity>(m_playerConfig.GRAVITY);
 }
 
+void Scene_Play::playerDead()
+{
+	auto pos = m_player->getComponent<CTransform>().pos;
+	m_player->destroy();
+	auto deadPlayer = m_entityManager.addEntity("MarioDead");
+	deadPlayer->addComponents<CTransform>(pos, Vec2(0.0f, YSPEED), Vec2(-1.0f, 1.0f), 0.0f);
+	deadPlayer->addComponents<CAnimation>(m_game->getAssets().getAnimation("MarioDead"), true);
+	deadPlayer->addComponents<CLifeSpan>(1.5);
+}
+
 void Scene_Play::update()
 {
 	spawnEnemy();
@@ -376,8 +387,7 @@ void Scene_Play::sCollision()
 			{
 				if (name == "Goomba")
 				{
-					m_player->destroy();
-					// add death animation
+					playerDead();
 					spawnPlayer();
 				}
 				pPos.x += pPrevPos.x < qPos.x ? -overlap.x : overlap.x;
@@ -492,6 +502,11 @@ void Scene_Play::sCollision()
 							eExplosion->addComponents<CTransform>(pos);
 							eExplosion->addComponents<CAnimation>(m_game->getAssets().getAnimation("Explosion"), false);
 							eExplosion->addComponents<CLifeSpan>(1.8);
+						}
+						else if (name == "Goomba")
+						{
+							e->destroy();
+							eb->destroy();
 						}
 						else if (name == "Question" || name == "Question2" || name == "PipeB"
 							|| name == "PipeS" || name == "PipeM" || name == "Block" || name == "Solid" || name == "Coin")
@@ -742,4 +757,14 @@ void Scene_Play::onLevelEnd()
 void Scene_Play::onEnd()
 {
 	m_game->changeScene("MENU", nullptr, true);
+}
+
+void Scene_Play::reloadLevel()
+{
+    // Clear all entities except the player
+    m_entityManager.clearAllEntities();
+    m_goombaPositions.clear();
+
+    // Reload level from the beginning
+    loadLevel(m_levelPath);
 }

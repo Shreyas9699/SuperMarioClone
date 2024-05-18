@@ -13,14 +13,16 @@ class Scene_Play : public Scene
 	};
 
 	const float GoombaSPEED = -1.0f;
+	const float YSPEED = 1.0f;
 
 	std::shared_ptr<Entity>	m_player;
 	std::string				m_levelPath;
 	PlayerConfig			m_playerConfig;
 	bool					m_drawTexture		= true;
-	bool					m_drawCollision	= false;
+	bool					m_drawCollision	    = false;
 	bool					m_drawGrid			= false;
 	bool					m_StateChanged		= false;
+	bool					m_reloadingLevel    = false;
 	const Vec2				m_gridSize	= { 16.0f, 16 };
 	sf::Text				m_gridText;
 	long int				m_score = 0;
@@ -39,9 +41,11 @@ class Scene_Play : public Scene
 	void spawnPlayer();
 	void spawnEnemy();
 	void createGoomba(const Vec2& position);
+	void playerDead();
 	void spawnBullet(std::shared_ptr<Entity>& entity);
 	void onLevelEnd();
 	void onEnd();
+	void reloadLevel();
 
 	// Systems
 	void sMovement();
