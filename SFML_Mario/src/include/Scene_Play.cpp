@@ -374,6 +374,12 @@ void Scene_Play::sCollision()
 
 			if (prevOverlap.y > 0.0f)
 			{
+				if (name == "Goomba")
+				{
+					m_player->destroy();
+					// add death animation
+					spawnPlayer();
+				}
 				pPos.x += pPrevPos.x < qPos.x ? -overlap.x : overlap.x;
 			}
 
@@ -415,6 +421,15 @@ void Scene_Play::sCollision()
 				}
 				else
 				{
+					if (name == "Goomba")
+					{
+						Vec2& pos = e->getComponent<CTransform>().pos;
+						e->destroy();
+						auto eGBDead = m_entityManager.addEntity("GoombaDead");
+						eGBDead->addComponents<CTransform>(pos);
+						eGBDead->addComponents<CAnimation>(m_game->getAssets().getAnimation("GoombaDead"), false);
+						eGBDead->addComponents<CLifeSpan>(0.5f);
+					}
 					pPos.y -= overlap.y;
 					m_player->getComponent<CInput>().canJump = true;
 				}
@@ -619,6 +634,10 @@ void Scene_Play::sRender()
 		for (auto& e : m_entityManager.getEntities())
 		{
 			auto& transform = e->getComponent<CTransform>();
+			if (e->getComponent<CAnimation>().animation.getName() == "player")
+			{
+				continue;
+			}
 
 			if (e->hasComponent<CAnimation>())
 			{
@@ -629,6 +648,14 @@ void Scene_Play::sRender()
 				m_game->window().draw(animation.getSprite());
 			}
 		}
+
+		// draw player last to make sure it not over lapped by other entites
+		auto& transform = m_player->getComponent<CTransform>();
+		auto& animation = m_player->getComponent<CAnimation>().animation;
+		animation.getSprite().setRotation(transform.angle);
+		animation.getSprite().setPosition(transform.pos.x, transform.pos.y);
+		animation.getSprite().setScale(transform.scale.x, transform.scale.y);
+		m_game->window().draw(animation.getSprite());
 	}
 
 	if (m_drawCollision)
