@@ -45,8 +45,6 @@
     <Image Include="assets\textures\mario_assets\qfade.png" />
     <Image Include="assets\textures\mario_assets\secret-box.png" />
     <Image Include="assets\textures\mario_assets\star.png" />
-    <Image Include="assets\textures\mario_assets\turtle-fly-0.png" />
-    <Image Include="assets\textures\mario_assets\turtle-fly-1.png" />
     <Image Include="assets\textures\mario_assets\wall.png" />
     <Image Include="assets\textures\mario_assets\flag.png" />
     <Image Include="assets\textures\mario_assets\solid.png" />
@@ -62,8 +60,6 @@
     <Image Include="assets\textures\marioCharacter\MarioRun.png" />
     <Image Include="assets\textures\mario_assets\mushroom-green.png" />
     <Image Include="assets\textures\mario_assets\turtle.png" />
-    <Image Include="assets\textures\mario_assets\owlDead.png" />
-    <Image Include="assets\textures\mario_assets\owl.png" />
     <Image Include="assets\textures\marioCharacter\BulletNewS.png" />
     <Image Include="assets\textures\mario_assets\piranha_up.png" />
     <Image Include="assets\textures\mario_assets\piranhaNew.png" />
@@ -75,6 +71,13 @@
     <Image Include="assets\textures\mario_assets\FLAG_TOP.png" />
     <Image Include="assets\textures\mario_assets\FLAG_POLE.png" />
     <Image Include="assets\textures\mario_assets\flagPole.png" />
+    <Image Include="assets\textures\marioCharacter\SUPER_MARIO_DUCK.png" />
+    <Image Include="assets\textures\marioCharacter\SUPER_MARIO_JUMP.png" />
+    <Image Include="assets\textures\marioCharacter\SUPER_MARIO_RUN.png" />
+    <Image Include="assets\textures\marioCharacter\SUPER_MARIO_STAND.png" />
+    <Image Include="assets\textures\mario_assets\GOOMBA.png" />
+    <Image Include="assets\textures\mario_assets\GOOMBA_CRUSHED.png" />
+    <Image Include="assets\textures\mario_assets\TURTLE_FLY.png" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
@@ -119,5 +122,20 @@
     <Font Include="assets\fonts\Freedom.ttf" />
     <Font Include="assets\fonts\dogica.ttf" />
     <Font Include="assets\fonts\font.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="assets\audio\theme.wav" />
+    <Media Include="assets\audio\blockbreak.wav" />
+    <Media Include="assets\audio\blockhit.wav" />
+    <Media Include="assets\audio\coin.wav" />
+    <Media Include="assets\audio\death.wav" />
+    <Media Include="assets\audio\jump.wav" />
+    <Media Include="assets\audio\levelend.wav" />
+    <Media Include="assets\audio\mushroomappear.wav" />
+    <Media Include="assets\audio\oneup.wav" />
+    <Media Include="assets\audio\overworld.wav" />
+    <Media Include="assets\audio\shrink.wav" />
+    <Media Include="assets\audio\stomp.wav" />
+    <Media Include="assets\audio\supermarioupgrade.wav" />
   </ItemGroup>
 </Project>

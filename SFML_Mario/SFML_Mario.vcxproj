@@ -210,8 +210,6 @@
     <Image Include="assets\textures\mario_assets\hill-small.png" />
     <Image Include="assets\textures\mario_assets\mushroom-green.png" />
     <Image Include="assets\textures\mario_assets\mushroom-red.png" />
-    <Image Include="assets\textures\mario_assets\owl.png" />
-    <Image Include="assets\textures\mario_assets\owlDead.png" />
     <Image Include="assets\textures\mario_assets\pipe-big.png" />
     <Image Include="assets\textures\mario_assets\pipe-med.png" />
     <Image Include="assets\textures\mario_assets\pipe-small.png" />
@@ -222,9 +220,8 @@
     <Image Include="assets\textures\mario_assets\secret-box.png" />
     <Image Include="assets\textures\mario_assets\solid.png" />
     <Image Include="assets\textures\mario_assets\star.png" />
-    <Image Include="assets\textures\mario_assets\turtle-fly-0.png" />
-    <Image Include="assets\textures\mario_assets\turtle-fly-1.png" />
     <Image Include="assets\textures\mario_assets\turtle.png" />
+    <Image Include="assets\textures\mario_assets\TURTLE_FLY.png" />
     <Image Include="assets\textures\mario_assets\wall.png" />
     <Image Include="assets\textures\megaman\air64S.png" />
     <Image Include="assets\textures\megaman\marioRunning.jpeg" />
@@ -275,6 +272,21 @@
     <Font Include="assets\fonts\SourceCodePro_ExtraLight.ttf" />
     <Font Include="assets\fonts\Techno.ttf" />
     <Font Include="assets\fonts\Ubuntu.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="assets\audio\theme.wav" />
+    <Media Include="assets\audio\blockbreak.wav" />
+    <Media Include="assets\audio\blockhit.wav" />
+    <Media Include="assets\audio\coin.wav" />
+    <Media Include="assets\audio\death.wav" />
+    <Media Include="assets\audio\jump.wav" />
+    <Media Include="assets\audio\levelend.wav" />
+    <Media Include="assets\audio\mushroomappear.wav" />
+    <Media Include="assets\audio\oneup.wav" />
+    <Media Include="assets\audio\overworld.wav" />
+    <Media Include="assets\audio\shrink.wav" />
+    <Media Include="assets\audio\stomp.wav" />
+    <Media Include="assets\audio\supermarioupgrade.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

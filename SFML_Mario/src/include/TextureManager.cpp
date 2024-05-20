@@ -15,7 +15,7 @@ int main()
 {
     try
     {
-        TextureManager tex();
+        TextureManager tex;
     }
     catch (const std::exception& e)
     {
@@ -98,6 +98,10 @@ TextureManager::TextureManager()
         {"BACKGROUND_MOUNTAIN_3", sf::IntRect(34, 17, TILE_SIZE, TILE_SIZE)},
         {"BACKGROUND_MOUNTAIN_4", sf::IntRect(17, 0, TILE_SIZE, TILE_SIZE)},
         {"BACKGROUND_MOUNTAIN_5", sf::IntRect(51, 17, TILE_SIZE, TILE_SIZE)},
+        {"BRICK_DEBRIS_1", sf::IntRect(136, 153, 8, 8)},
+        {"BRICK_DEBRIS_2", sf::IntRect(144, 153, 8, 8)},
+        {"BRICK_DEBRIS_3", sf::IntRect(136, 161, 8, 8)},
+        {"BRICK_DEBRIS_4", sf::IntRect(144, 161, 8, 8)},
         {"COIN_1", sf::IntRect(153, 153, TILE_SIZE, TILE_SIZE)},
         {"COIN_2", sf::IntRect(170, 153, TILE_SIZE, TILE_SIZE)},
         {"COIN_3", sf::IntRect(187, 153, TILE_SIZE, TILE_SIZE)},

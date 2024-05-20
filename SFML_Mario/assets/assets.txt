@@ -37,6 +37,7 @@ Texture   TexExplosion  assets/textures/mario_assets/explosionS.png
 Texture   TexGoomba     assets/textures/mario_assets/GOOMBA.png
 Texture   TexGoombaDead assets/textures/mario_assets/GOOMBA_CRUSHED.png
 Texture   TexTurtle     assets/textures/mario_assets/turtle.png
+Texture   TexTurtleFly  assets/textures/mario_assets/TURTLE_FLY.png
 Texture   TexPiranha    assets/textures/mario_assets/piranhaNew.png
 Animation MarioStand      TexStand        1     0
 Animation MarioRun        TexRun          3     10
@@ -47,6 +48,7 @@ Animation SuperMarioRun   TexSupRun       3     10
 Animation SuperMarioAir   TexSupAir       1     0
 Animation SuperMarioAir   TexSupDuck      1     0
 Animation Turtle		  TexTurtle       2     10
+Animation TurtleFly		  TexTurtleFly    2     10
 Animation Piranha		  TexPiranha	  10    5
 Animation Goomba		  TexGoomba       2     10
 Animation GoombaDead      TexGoombaDead   1     0
@@ -85,3 +87,14 @@ Font      Freedom       assets/fonts/Freedom.ttf
 Font      dogica        assets/fonts/dogica.ttf
 Font      Pixel         assets/fonts/pixeled.ttf
 Font      Mario         assets/fonts/font.ttf
+Sound	  BrickBreak	assets/audio/blockbreak.wav
+Sound	  Coin			assets/audio/coin.wav
+Sound	  MarioDeath	assets/audio/death.wav
+Sound	  MarioAir		assets/audio/jump.wav
+Sound	  MarioToSuper	assets/audio/supermarioupgrade.wav
+Sound	  StompGoomba	assets/audio/stomp.wav
+Sound	  SuperShrink	assets/audio/shrink.wav
+Sound	  RedMushroom	assets/audio/mushroomappear.wav
+Sound	  GreenMushroom	assets/audio/oneup.wav
+Sound     LevelEnd		assets/audio/levelend.wav
+Sound     Levelbkg      assets/audio/theme.wav

@@ -8,7 +8,7 @@ class Assets
 {
 	std::unordered_map<std::string, sf::Texture>		m_textureMap;
 	std::unordered_map<std::string, Animation>			m_animationMap;
-	std::unordered_map<std::string, sf::Sound>			m_SoundsMap;
+	std::unordered_map<std::string, sf::SoundBuffer>					m_SoundsMap;
 	std::unordered_map<std::string, sf::Font>			m_fontMap;
 
 	void addTexture(const std::string& name, const std::string& path);
@@ -22,5 +22,5 @@ public:
 	const sf::Texture& getTexture(const std::string& name) const;
 	const Animation& getAnimation(const std::string& name) const;
 	const sf::Font& getFont(const std::string& name) const;
-	const sf::Sound& getSound(const std::string& name) const;
+	const sf::SoundBuffer& getSound(const std::string& name) const;
 };

@@ -74,7 +74,7 @@ void Assets::addTexture(const std::string& name, const std::string& path)
 	else
 	{
 		m_textureMap[name] = t;
-		std::cout << "Load texture '" << name << "' from path '" << path << "'" << std::endl;
+		std::cout << "Loaded texture '" << name << "' from path '" << path << "'" << std::endl;
 	}
 }
 
@@ -102,7 +102,7 @@ void Assets::addFont(const std::string& name, const std::string& path)
 	}
 	else
 	{
-		std::cout << "Load Font '" << name << "' from path '" << path << "'" << std::endl;
+		std::cout << "Loaded Font '" << name << "' from path '" << path << "'" << std::endl;
 	}
 }
 
@@ -121,9 +121,9 @@ void Assets::addSound(const std::string& name, const std::string& path)
 	}
 	else
 	{
-		std::cout << "Load Sound '" << name << "' from path '" << path << "'" << std::endl;
+		m_SoundsMap[name] = buffer;
+		std::cout << "Loaded Sound '" << name << "' from path '" << path << "'" << std::endl;
 	}
-	m_SoundsMap[name] = sf::Sound(buffer);
 }
 
 const sf::Texture& Assets::getTexture(const std::string& name) const
@@ -150,7 +150,7 @@ const Animation& Assets::getAnimation(const std::string& name) const
 	exit(-1);
 }
 
-const sf::Sound& Assets::getSound(const std::string& name) const
+const sf::SoundBuffer& Assets::getSound(const std::string& name) const
 {
 	auto it = m_SoundsMap.find(name);
 	if (it != m_SoundsMap.end())

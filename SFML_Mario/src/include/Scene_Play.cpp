@@ -331,6 +331,7 @@ void Scene_Play::sCollision()
 {
 	// TODO: Implement bullet / tile collisions
 	//       Destroy the tile if it has a Brick animation
+	sf::Sound stomp;
 	auto& pPos = m_player->getComponent<CTransform>().pos;
 	bool hasCollision = false;
 
@@ -358,7 +359,7 @@ void Scene_Play::sCollision()
 			}
 
 			// player and castle collosion
-			if (name == "Pole")
+			if (name == "Pole" || name == "Flag" || name == "FlagTop")
 			{
 				m_player->destroy();
 				onLevelEnd();
@@ -434,7 +435,17 @@ void Scene_Play::sCollision()
 					if (name == "Goomba")
 					{
 						Vec2& pos = e->getComponent<CTransform>().pos;
-						e->destroy();
+						e->destroy(); 
+						const sf::SoundBuffer& buffer = m_game->getAssets().getSound("StompGoomba");
+						std::cout << "Buffer Sample Count: " << buffer.getSampleCount() << std::endl;
+						stomp.setBuffer(buffer);
+						stomp.play();
+						if (stomp.getStatus() == sf::Sound::Playing) {
+							std::cout << "Playing\n";
+						}
+						else {
+							std::cout << "Sound Not Playing (After Playing). \n";  // Added message
+						}
 						auto eGBDead = m_entityManager.addEntity("GoombaDead");
 						eGBDead->addComponents<CTransform>(pos);
 						eGBDead->addComponents<CAnimation>(m_game->getAssets().getAnimation("GoombaDead"), false);
