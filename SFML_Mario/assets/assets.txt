@@ -40,7 +40,7 @@ Texture   TexTurtle     assets/textures/mario_assets/turtle.png
 Texture   TexTurtleFly  assets/textures/mario_assets/TURTLE_FLY.png
 Texture   TexPiranha    assets/textures/mario_assets/piranhaNew.png
 Animation MarioStand      TexStand        1     0
-Animation MarioRun        TexRun          3     10
+Animation MarioRun        TexRun          3     5
 Animation MarioAir        TexAir          1     0
 Animation MarioDead		  TexDead		  1     0
 Animation SuperMarioStand TexSupStand     1     0
@@ -79,14 +79,10 @@ Animation Pole	          TexFlagPole     1     0
 Animation Flag	          TexFlag         1     0
 Animation FlagTop	      TexFlagTop      1     0
 Animation Castle	      TexCastle       1     0
-Font      Tech          assets/fonts/Techno.ttf
 Font      Mario         assets/fonts/RetroMario-Regular.otf
 Font      Megaman       assets/fonts/Mega-Man-Battle-Network.ttf
-Font      Arial         assets/fonts/ArialRegular.ttf
-Font      Freedom       assets/fonts/Freedom.ttf
 Font      dogica        assets/fonts/dogica.ttf
 Font      Pixel         assets/fonts/pixeled.ttf
-Font      Mario         assets/fonts/font.ttf
 Sound	  BrickBreak	assets/audio/blockbreak.wav
 Sound	  Coin			assets/audio/coin.wav
 Sound	  MarioDeath	assets/audio/death.wav

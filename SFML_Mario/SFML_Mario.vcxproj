@@ -178,8 +178,13 @@
     <Image Include="assets\textures\mario\pipe.png" />
     <Image Include="assets\textures\mario\qfade.png" />
     <Image Include="assets\textures\mario\question2.png" />
+    <Image Include="assets\textures\mario_assets\100Lable.png" />
     <Image Include="assets\textures\mario_assets\block.png" />
     <Image Include="assets\textures\mario_assets\brick.png" />
+    <Image Include="assets\textures\mario_assets\BRICK_DEBRIS_1.png" />
+    <Image Include="assets\textures\mario_assets\BRICK_DEBRIS_2.png" />
+    <Image Include="assets\textures\mario_assets\BRICK_DEBRIS_3.png" />
+    <Image Include="assets\textures\mario_assets\BRICK_DEBRIS_4.png" />
     <Image Include="assets\textures\mario_assets\bush-big.png" />
     <Image Include="assets\textures\mario_assets\bush-med.png" />
     <Image Include="assets\textures\mario_assets\bush-small.png" />
@@ -191,6 +196,7 @@
     <Image Include="assets\textures\mario_assets\coin-1.png" />
     <Image Include="assets\textures\mario_assets\coin-2.png" />
     <Image Include="assets\textures\mario_assets\coin-3.png" />
+    <Image Include="assets\textures\mario_assets\COIN.png" />
     <Image Include="assets\textures\mario_assets\coinspin.png" />
     <Image Include="assets\textures\mario_assets\enemy-0.png" />
     <Image Include="assets\textures\mario_assets\enemy-1.png" />
@@ -210,6 +216,7 @@
     <Image Include="assets\textures\mario_assets\hill-small.png" />
     <Image Include="assets\textures\mario_assets\mushroom-green.png" />
     <Image Include="assets\textures\mario_assets\mushroom-red.png" />
+    <Image Include="assets\textures\mario_assets\ONE_UP_LABEL.png" />
     <Image Include="assets\textures\mario_assets\pipe-big.png" />
     <Image Include="assets\textures\mario_assets\pipe-med.png" />
     <Image Include="assets\textures\mario_assets\pipe-small.png" />
@@ -220,6 +227,7 @@
     <Image Include="assets\textures\mario_assets\secret-box.png" />
     <Image Include="assets\textures\mario_assets\solid.png" />
     <Image Include="assets\textures\mario_assets\star.png" />
+    <Image Include="assets\textures\mario_assets\THOUSANDlable.png" />
     <Image Include="assets\textures\mario_assets\turtle.png" />
     <Image Include="assets\textures\mario_assets\TURTLE_FLY.png" />
     <Image Include="assets\textures\mario_assets\wall.png" />
@@ -261,17 +269,11 @@
     <ClInclude Include="src\include\Vec2.h" />
   </ItemGroup>
   <ItemGroup>
-    <Font Include="assets\fonts\ArialRegular.ttf" />
-    <Font Include="assets\fonts\CourierNew.ttf" />
     <Font Include="assets\fonts\dogica.ttf" />
     <Font Include="assets\fonts\font.ttf" />
-    <Font Include="assets\fonts\Freedom.ttf" />
     <Font Include="assets\fonts\Mega-Man-Battle-Network.ttf" />
     <Font Include="assets\fonts\pixeled.ttf" />
     <Font Include="assets\fonts\RetroMario-Regular.otf" />
-    <Font Include="assets\fonts\SourceCodePro_ExtraLight.ttf" />
-    <Font Include="assets\fonts\Techno.ttf" />
-    <Font Include="assets\fonts\Ubuntu.ttf" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="assets\audio\theme.wav" />

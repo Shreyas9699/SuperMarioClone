@@ -78,6 +78,14 @@
     <Image Include="assets\textures\mario_assets\GOOMBA.png" />
     <Image Include="assets\textures\mario_assets\GOOMBA_CRUSHED.png" />
     <Image Include="assets\textures\mario_assets\TURTLE_FLY.png" />
+    <Image Include="assets\textures\mario_assets\COIN.png" />
+    <Image Include="assets\textures\mario_assets\BRICK_DEBRIS_4.png" />
+    <Image Include="assets\textures\mario_assets\BRICK_DEBRIS_1.png" />
+    <Image Include="assets\textures\mario_assets\BRICK_DEBRIS_2.png" />
+    <Image Include="assets\textures\mario_assets\BRICK_DEBRIS_3.png" />
+    <Image Include="assets\textures\mario_assets\100Lable.png" />
+    <Image Include="assets\textures\mario_assets\ONE_UP_LABEL.png" />
+    <Image Include="assets\textures\mario_assets\THOUSANDlable.png" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
@@ -111,15 +119,9 @@
     <ClInclude Include="src\include\TextureManager.h" />
   </ItemGroup>
   <ItemGroup>
-    <Font Include="assets\fonts\Techno.ttf" />
     <Font Include="assets\fonts\Mega-Man-Battle-Network.ttf" />
     <Font Include="assets\fonts\RetroMario-Regular.otf" />
-    <Font Include="assets\fonts\ArialRegular.ttf" />
-    <Font Include="assets\fonts\CourierNew.ttf" />
-    <Font Include="assets\fonts\Ubuntu.ttf" />
-    <Font Include="assets\fonts\SourceCodePro_ExtraLight.ttf" />
     <Font Include="assets\fonts\pixeled.ttf" />
-    <Font Include="assets\fonts\Freedom.ttf" />
     <Font Include="assets\fonts\dogica.ttf" />
     <Font Include="assets\fonts\font.ttf" />
   </ItemGroup>

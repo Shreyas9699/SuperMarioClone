@@ -114,7 +114,7 @@ void Scene_Play::loadLevel(const std::string& levelPath)
 		{
 			std::cout << "Creating Goomba Position vector \n";
 			float x, y;
-			while (file >> text && text != "GEND")
+			while (file >> text && text != "END")
 			{
 				std::istringstream ss(text);
 				if (ss >> x)
@@ -231,6 +231,7 @@ void Scene_Play::update()
 
 void Scene_Play::sMovement()
 {
+	// Player movement
 	auto& input = m_player->getComponent<CInput>();
 	auto& transform = m_player->getComponent<CTransform>();
 
@@ -281,16 +282,16 @@ void Scene_Play::sMovement()
 	transform.prevPos = transform.pos;
 	transform.pos += transform.velocity;
 
+	// Bulleet movement
 	for (auto& e : m_entityManager.getEntities("Bullet"))
 	{
 		e->getComponent<CTransform>().pos += e->getComponent<CTransform>().velocity;
 	}
 
+	// Goomba movement
 	for (auto& goomba : m_entityManager.getEntities("Goomba"))
 	{
 		auto& transform = goomba->getComponent<CTransform>();
-
-		// Apply gravity
 		transform.velocity.y += goomba->getComponent<CGravity>().gravity;
 
 		// Cap the vertical velocity
@@ -298,18 +299,44 @@ void Scene_Play::sMovement()
 		{
 			transform.velocity.y = m_playerConfig.MAXSPEED;
 		}
-
-		// Ensure Goomba moves left or right
-		if (transform.velocity.x == 0.0f)
-		{
-			transform.velocity.x = GoombaSPEED; // Set initial direction to move right
-		}
-
 		// Update the position based on velocity
 		transform.prevPos = transform.pos;
 		transform.pos += transform.velocity;
 	}
 
+	// Miscellaneous : Coin, Star, Mushroom
+	for (const auto& tag : m_rewards) 
+	{
+		for (auto& e : m_entityManager.getEntities(tag)) 
+		{
+			auto& transform = e->getComponent<CTransform>();
+
+			if (e->getComponent<CAnimation>().animation.getName() == "Coin")
+			{
+				if (transform.velocity.y == 0.0f)
+				{
+					transform.velocity.y = GoombaSPEED / 2.5f;
+				}
+
+				// Update the position based on velocity
+				transform.prevPos = transform.pos;
+				transform.pos += transform.velocity;
+				continue;
+			}
+			// Apply gravity
+			transform.velocity.y += e->getComponent<CGravity>().gravity;
+
+			// Ensure Goomba moves left or right
+			if (transform.velocity.x == 0.0f)
+			{
+				transform.velocity.x = -1 * GoombaSPEED; // Set initial direction to move right
+			}
+
+			// Update the position based on velocity
+			transform.prevPos = transform.pos;
+			transform.pos += transform.velocity;
+		}
+	}
 }
 
 void Scene_Play::sLifeSpan()
@@ -409,16 +436,27 @@ void Scene_Play::sCollision()
 						std::random_device rd;
 						std::mt19937 gen(rd());
 
-						// Choose a random index from 0 to vec.size() - 1
-						std::uniform_int_distribution<> dis(0, m_rewards.size() - 1);
+						// Choose a random index from 0 to vec.size() - 1 and each index has its weights
+						std::discrete_distribution<> dis(m_weights.begin(), m_weights.end());
 						int randomIndex = dis(gen);
 
 						// Get the random element from the vector
 						std::string eName = m_rewards[randomIndex];
-						auto eCoin = m_entityManager.addEntity(eName);
-						eCoin->addComponents<CTransform>(pos);
-						eCoin->addComponents<CAnimation>(m_game->getAssets().getAnimation(eName), true);
-						eCoin->addComponents<CBoundingBox>(m_game->getAssets().getAnimation(eName).getSize());
+						//std::string eName = "Coin";
+						auto reward = m_entityManager.addEntity(eName);
+						reward->addComponents<CTransform>(pos);
+						reward->addComponents<CAnimation>(m_game->getAssets().getAnimation(eName), true);
+						if (eName != "Coin") { reward->addComponents<CBoundingBox>(m_game->getAssets().getAnimation(eName).getSize()); }
+						reward->addComponents<CGravity>(m_playerConfig.GRAVITY);
+						if (eName == "Coin")
+						{
+							m_score += 100;
+							reward->addComponents<CLifeSpan>(0.5f);
+						}
+						else if (eName == "Star")
+						{
+							reward->addComponents<CLifeSpan>(6.0f);
+						}
 					}
 					else if (name == "Brick")
 					{
@@ -436,16 +474,16 @@ void Scene_Play::sCollision()
 					{
 						Vec2& pos = e->getComponent<CTransform>().pos;
 						e->destroy(); 
-						const sf::SoundBuffer& buffer = m_game->getAssets().getSound("StompGoomba");
-						std::cout << "Buffer Sample Count: " << buffer.getSampleCount() << std::endl;
-						stomp.setBuffer(buffer);
-						stomp.play();
-						if (stomp.getStatus() == sf::Sound::Playing) {
-							std::cout << "Playing\n";
-						}
-						else {
-							std::cout << "Sound Not Playing (After Playing). \n";  // Added message
-						}
+						//const sf::SoundBuffer& buffer = m_game->getAssets().getSound("StompGoomba");
+						//std::cout << "Buffer Sample Count: " << buffer.getSampleCount() << std::endl;
+						//stomp.setBuffer(buffer);
+						//stomp.play();
+						//if (stomp.getStatus() == sf::Sound::Playing) {
+						//	std::cout << "Playing\n";
+						//}
+						//else {
+						//	std::cout << "Sound Not Playing (After Playing). \n";  // Added message
+						//}
 						auto eGBDead = m_entityManager.addEntity("GoombaDead");
 						eGBDead->addComponents<CTransform>(pos);
 						eGBDead->addComponents<CAnimation>(m_game->getAssets().getAnimation("GoombaDead"), false);
@@ -495,60 +533,31 @@ void Scene_Play::sCollision()
 
 			if (!(overlap.x < 0.0f || overlap.y < 0.0f))
 			{
-				hasCollision = true;
 				auto& qPos = e->getComponent<CTransform>().pos;
 				auto& bPrevPos = eb->getComponent<CTransform>().prevPos;
-				// Check the direction of bullet's movement and handle collision accordingly
-				if (eb->getComponent<CTransform>().velocity.x > 0) // Bullet moving right
-				{
-					if (bPrevPos.x < qPos.x)
+				const std::string& name = e->getComponent<CAnimation>().animation.getName();
+				if (name == "Brick")
 					{
-						const std::string& name = e->getComponent<CAnimation>().animation.getName();
-						if (name == "Brick")
-						{
-							Vec2& pos = e->getComponent<CTransform>().pos;
-							e->destroy();
-							eb->destroy();
-							auto eExplosion = m_entityManager.addEntity("Explosion");
-							eExplosion->addComponents<CTransform>(pos);
-							eExplosion->addComponents<CAnimation>(m_game->getAssets().getAnimation("Explosion"), false);
-							eExplosion->addComponents<CLifeSpan>(1.8);
-						}
-						else if (name == "Goomba")
-						{
-							e->destroy();
-							eb->destroy();
-						}
-						else if (name == "Question" || name == "Question2" || name == "PipeB"
-							|| name == "PipeS" || name == "PipeM" || name == "Block" || name == "Solid" || name == "Coin")
-						{
-							eb->destroy();
-						}
+						Vec2& pos = e->getComponent<CTransform>().pos;
+						e->destroy();
+						eb->destroy();
+						auto eExplosion = m_entityManager.addEntity("Explosion");
+						eExplosion->addComponents<CTransform>(pos);
+						eExplosion->addComponents<CAnimation>(m_game->getAssets().getAnimation("Explosion"), false);
+						eExplosion->addComponents<CLifeSpan>(1.8);
 					}
-				}
-				else // Bullet moving left
-				{
-					if (bPrevPos.x > qPos.x)
+				else if (name == "Goomba")
 					{
-						const std::string& name = e->getComponent<CAnimation>().animation.getName();
-						if (name == "Brick")
-						{
-							Vec2& pos = e->getComponent<CTransform>().pos;
-							e->destroy();
-							eb->destroy();
-							auto eExplosion = m_entityManager.addEntity("Explosion");
-							eExplosion->addComponents<CTransform>(pos);
-							eExplosion->addComponents<CAnimation>(m_game->getAssets().getAnimation("Explosion"), false);
-						}
-						else if (name == "Question" || name == "Question2" || name == "PipeB"
-							|| name == "PipeS" || name == "PipeM" || name == "Block" || name == "Solid")
-						{
-							eb->destroy();
-						}
+						e->destroy();
+						eb->destroy();
 					}
-				}
+				else
+					{
+						eb->destroy();
+					}
 			}
 		}
+
 	}
 
 	// Goomba
@@ -558,8 +567,7 @@ void Scene_Play::sCollision()
 
 		for (auto& e : m_entityManager.getEntities())
 		{
-			if (e->getComponent<CAnimation>().animation.getName() == "Goomba" 
-				|| !e->hasComponent<CBoundingBox>() || !e->hasComponent<CTransform>() || e == goomba)
+			if (!e->hasComponent<CBoundingBox>() || !e->hasComponent<CTransform>() || e == goomba)
 			{
 				continue;
 			}
@@ -599,8 +607,62 @@ void Scene_Play::sCollision()
 				}
 				if (gPos.x < 0.0f)
 				{
-					gPos.x = 0.0f;
+					//gPos.x = 0.0f;
+					//goomba->getComponent<CTransform>().velocity.x *= -1;
 					goomba->destroy();
+				}
+			}
+		}
+	}
+
+
+	// // Miscellaneous : Coin, Star, Mushroom
+	for (auto& tag : m_rewards)
+	{
+		for (auto& eR : m_entityManager.getEntities(tag))
+		{
+			auto& eRPos = eR->getComponent<CTransform>().pos;
+			const std::string& eRname = eR->getComponent<CAnimation>().animation.getName();
+
+			for (auto& e : m_entityManager.getEntities())
+			{
+				if (!e->hasComponent<CBoundingBox>() || !e->hasComponent<CTransform>() || e == eR || eRname == "Coin")
+				{
+					continue;
+				}
+				Vec2 overlap = Physics::GetOverlap(e, eR);
+				Vec2 prevOverlap = Physics::GetPreviousOverlap(e, eR);
+
+				if (!(overlap.x < 0.0f || overlap.y < 0.0f))
+				{
+					auto& ePos = e->getComponent<CTransform>().pos;
+					auto& eRPrevPos = eR->getComponent<CTransform>().prevPos;
+
+					// Similar collision responses as the player
+					if (prevOverlap.y > 0.0f)
+					{
+						eRPos.x += eRPrevPos.x < ePos.x ? -overlap.x : overlap.x;
+						// Change direction upon horizontal collision
+						eR->getComponent<CTransform>().velocity.x *= -1;
+					}
+					if (prevOverlap.x > 0.0f)
+					{
+						if (eRPrevPos.y > ePos.y)
+						{
+							eRPos.y += overlap.y;
+						}
+						else
+						{
+							eRPos.y -= overlap.y;
+						}
+						eR->getComponent<CTransform>().velocity.y = 0.0f;
+					}
+
+					// Handle falling out of the scene
+					if (eRPos.y > height() || eRPos.x < 0.0f)
+					{
+						eR->destroy();
+					}
 				}
 			}
 		}

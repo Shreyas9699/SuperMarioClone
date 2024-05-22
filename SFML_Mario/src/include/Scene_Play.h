@@ -33,7 +33,10 @@ class Scene_Play : public Scene
 	std::chrono::time_point<std::chrono::high_resolution_clock> pauseStartTime = std::chrono::high_resolution_clock::now();;
 	
 	std::vector<Vec2> m_goombaPositions;
-	std::vector<std::string> m_rewards = { "Coin", "Star", "MushroomR", "MushroomG" };
+	std::vector<std::string> m_rewards		= { "Coin", "Star", "MushroomR", "MushroomG" };
+	//Probability of selecting each reward is distributed as below
+	// 50% for Coin, 25% for Star, and 12.5% each for MushroomR and MushroomG
+	std::vector<int> m_weights = { 65, 12, 12, 12 };
 
 	void init(const std::string& levelPath); 
 	Vec2 gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity) const;
