@@ -314,10 +314,11 @@ void Scene_Play::sMovement()
 				auto& transform = e->getComponent<CTransform>();
 				if (transform.velocity.y == 0.0f)
 				{
-					transform.velocity.y = GoombaSPEED / 2.5f;
+					transform.velocity.y = GoombaSPEED;
 				}
 
 				// Update the position based on velocity
+				transform.velocity.y += e->getComponent<CGravity>().gravity / 2.0f;
 				transform.prevPos = transform.pos;
 				transform.pos += transform.velocity;
 				continue;
@@ -328,12 +329,13 @@ void Scene_Play::sMovement()
 
 			if (state.state == "Emerging")
 			{
-				if (transform.pos.y <= transform.initialPos.y - 16)  // Adjust this value as needed
+				if (transform.pos.y >= transform.initialPos.y - 16.5f)  // Adjust this value as needed
 				{
 					transform.pos.y -= 0.5f;
 				}
 				else
 				{
+					transform.pos.y = transform.initialPos.y - 16.5f;  // Ensure it exactly reaches the target height
 					state.state = "Moving";  // Transition to Moving state
 					if (!e->hasComponent<CBoundingBox>())
 					{
@@ -350,7 +352,7 @@ void Scene_Play::sMovement()
 				// Ensure Mushroom moves left
 				if (transform.velocity.x == 0.0f)
 				{
-					transform.velocity.x = -1 * GoombaSPEED; // Set initial direction to move left
+					transform.velocity.x = -1 * (GoombaSPEED / 1.5f); // Set initial direction to move left
 				}
 
 				// Update the position based on velocity
@@ -419,7 +421,6 @@ void Scene_Play::sCollision()
 			{
 				// should make them invincible
 				e->destroy();
-				m_score += name == "Coin" ? 75 : 125;
 			}
 
 			if (name == "MushroomR")
@@ -452,8 +453,8 @@ void Scene_Play::sCollision()
 					const std::string& name = e->getComponent<CAnimation>().animation.getName();
 					if (name == "Question")
 					{
-						e->addComponents<CAnimation>(m_game->getAssets().getAnimation("Solid"), true);
 						Vec2 pos = e->getComponent<CTransform>().pos;
+						e->addComponents<CAnimation>(m_game->getAssets().getAnimation("Solid"), true);
 						// Seed the random number generator
 						std::random_device rd;
 						std::mt19937 gen(rd());
@@ -464,15 +465,18 @@ void Scene_Play::sCollision()
 
 						// Get the random element from the vector
 						std::string eName = m_rewards[randomIndex];
+						//std::string eName = "MushroomG";
 						auto reward = m_entityManager.addEntity(eName);
 						if (eName != "Coin") 
 						{
-							reward->addComponents<CTransform>(pos);
+							Vec2 rewardSize = m_game->getAssets().getAnimation(eName).getSize();
+							reward->addComponents<CTransform>(Vec2(pos.x, pos.y - rewardSize.y / 2));
+							reward->getComponent<CTransform>().initialPos = pos;
 							reward->addComponents<CState>("Emerging"); // Set initial state to Emerging for non-Coin rewards
 						}
 						else
 						{
-							reward->addComponents<CTransform>(Vec2(pos.x, pos.y - 16.5));
+							reward->addComponents<CTransform>(Vec2(pos.x, pos.y - 16.5f));
 						}
 						reward->addComponents<CAnimation>(m_game->getAssets().getAnimation(eName), true);
 						reward->addComponents<CGravity>(m_playerConfig.GRAVITY);
@@ -726,35 +730,77 @@ void Scene_Play::sRender()
 		m_game->window().clear(sf::Color(58, 58, 100));
 	}
 
+	// Setup UI view for score and timer rendering
 	sf::View originalView = m_game->window().getView();
 	sf::View uiView(sf::FloatRect(0, 0, m_game->window().getSize().x, m_game->window().getSize().y));
 	m_game->window().setView(uiView);
+
+	// Render score
 	m_scoreText.setPosition(10, 10);
 	m_scoreText.setString("Score: " + std::to_string(m_score)); 
 	m_game->window().draw(m_scoreText);
+
+	// Render timer
 	std::string timeString = "Time: " + std::to_string((std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now() - startTimer)).count()) + "s";
 	m_timerText.setString(timeString);
 	sf::FloatRect textRect = m_timerText.getLocalBounds();
 	m_timerText.setPosition(m_game->window().getSize().x - textRect.width - 10, 10);
 	m_game->window().draw(m_timerText);
+
+	// Restore original view
 	m_game->window().setView(originalView);
 
+	// Set the game view centered on the player
 	auto& pPos = m_player->getComponent<CTransform>().pos;
 	sf::View view = m_game->window().getView();
 	float windowCenterX = std::max(view.getSize().x / 2.0f, pPos.x);
 	view.setCenter(windowCenterX, m_game->window().getSize().y - view.getSize().y / 2.0f);
 	m_game->window().setView(view);
 
+	// Lists to store different types of entities
+	std::vector<std::shared_ptr<Entity>> rewards;
+	std::vector<std::shared_ptr<Entity>> blocks;
+	std::vector<std::shared_ptr<Entity>> others;
+
+	// Categorize entities
+	for (auto& e : m_entityManager.getEntities())
+	{
+		if (e->getComponent<CAnimation>().animation.getName() == "player")
+		{
+			continue;
+		}
+
+		if (e->hasComponent<CState>() && e->getComponent<CState>().state == "Emerging")
+		{
+			rewards.push_back(e);
+		}
+		else if (e->getComponent<CAnimation>().animation.getName() == "Question")
+		{
+			blocks.push_back(e);
+		}
+		else
+		{
+			others.push_back(e);
+		}
+	}
+
+
 	if (m_drawTexture)
 	{
-		for (auto& e : m_entityManager.getEntities())
+		for (auto& e : rewards)
 		{
 			auto& transform = e->getComponent<CTransform>();
-			if (e->getComponent<CAnimation>().animation.getName() == "player")
-			{
-				continue;
-			}
+			auto& animation = e->getComponent<CAnimation>().animation;
+			animation.getSprite().setRotation(transform.angle);
+			animation.getSprite().setPosition(transform.pos.x, transform.pos.y);
+			animation.getSprite().setScale(transform.scale.x, transform.scale.y);
+			m_game->window().draw(animation.getSprite());
+		}
 
+		// Render blocks
+		for (auto& e : blocks)
+		{
+			auto& transform = e->getComponent<CTransform>();
 			if (e->hasComponent<CAnimation>())
 			{
 				auto& animation = e->getComponent<CAnimation>().animation;
@@ -765,7 +811,21 @@ void Scene_Play::sRender()
 			}
 		}
 
-		// draw player last to make sure it not over lapped by other entites
+		// Render other entities
+		for (auto& e : others)
+		{
+			auto& transform = e->getComponent<CTransform>();
+			if (e->hasComponent<CAnimation>())
+			{
+				auto& animation = e->getComponent<CAnimation>().animation;
+				animation.getSprite().setRotation(transform.angle);
+				animation.getSprite().setPosition(transform.pos.x, transform.pos.y);
+				animation.getSprite().setScale(transform.scale.x, transform.scale.y);
+				m_game->window().draw(animation.getSprite());
+			}
+		}
+
+		// Draw player last to make sure it is not overlapped by other entities
 		auto& transform = m_player->getComponent<CTransform>();
 		auto& animation = m_player->getComponent<CAnimation>().animation;
 		animation.getSprite().setRotation(transform.angle);
@@ -774,6 +834,7 @@ void Scene_Play::sRender()
 		m_game->window().draw(animation.getSprite());
 	}
 
+	// Draw collision boxes if enabled
 	if (m_drawCollision)
 	{
 		for (auto& e : m_entityManager.getEntities())
