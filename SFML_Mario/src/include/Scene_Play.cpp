@@ -309,10 +309,9 @@ void Scene_Play::sMovement()
 	{
 		for (auto& e : m_entityManager.getEntities(tag)) 
 		{
-			auto& transform = e->getComponent<CTransform>();
-
 			if (e->getComponent<CAnimation>().animation.getName() == "Coin")
 			{
+				auto& transform = e->getComponent<CTransform>();
 				if (transform.velocity.y == 0.0f)
 				{
 					transform.velocity.y = GoombaSPEED / 2.5f;
@@ -323,18 +322,41 @@ void Scene_Play::sMovement()
 				transform.pos += transform.velocity;
 				continue;
 			}
-			// Apply gravity
-			transform.velocity.y += e->getComponent<CGravity>().gravity;
 
-			// Ensure Goomba moves left or right
-			if (transform.velocity.x == 0.0f)
+			auto& transform = e->getComponent<CTransform>();
+			auto& state = e->getComponent<CState>();
+
+			if (state.state == "Emerging")
 			{
-				transform.velocity.x = -1 * GoombaSPEED; // Set initial direction to move right
+				if (transform.pos.y <= transform.initialPos.y - 16)  // Adjust this value as needed
+				{
+					transform.pos.y -= 0.5f;
+				}
+				else
+				{
+					state.state = "Moving";  // Transition to Moving state
+					if (!e->hasComponent<CBoundingBox>())
+					{
+						Vec2 BB = m_game->getAssets().getAnimation(e->getComponent<CAnimation>().animation.getName()).getSize();
+						e->addComponents<CBoundingBox>(Vec2(BB.x - 1, BB.y));
+					}
+				}
 			}
+			else if (state.state == "Moving")
+			{
+				// Apply gravity
+				transform.velocity.y += e->getComponent<CGravity>().gravity;
 
-			// Update the position based on velocity
-			transform.prevPos = transform.pos;
-			transform.pos += transform.velocity;
+				// Ensure Mushroom moves left
+				if (transform.velocity.x == 0.0f)
+				{
+					transform.velocity.x = -1 * GoombaSPEED; // Set initial direction to move left
+				}
+
+				// Update the position based on velocity
+				transform.prevPos = transform.pos;
+				transform.pos += transform.velocity;
+			}
 		}
 	}
 }
@@ -393,21 +415,22 @@ void Scene_Play::sCollision()
 			}
 
 			// player reward collosion
-			if (name == "Coin" || name == "Star")
+			if (name == "Star")
 			{
+				// should make them invincible
 				e->destroy();
 				m_score += name == "Coin" ? 75 : 125;
 			}
 
 			if (name == "MushroomR")
 			{
-				// need to add some effects up on collision
+				// Turn into Super Mario
 				e->destroy();
 			}
 
 			if (name == "MushroomG")
 			{
-				// need to add some effects up on collision
+				// Give Extra lives
 				e->destroy();
 			}
 
@@ -431,7 +454,6 @@ void Scene_Play::sCollision()
 					{
 						e->addComponents<CAnimation>(m_game->getAssets().getAnimation("Solid"), true);
 						Vec2 pos = e->getComponent<CTransform>().pos;
-						pos.y -= 16.5;
 						// Seed the random number generator
 						std::random_device rd;
 						std::mt19937 gen(rd());
@@ -442,11 +464,17 @@ void Scene_Play::sCollision()
 
 						// Get the random element from the vector
 						std::string eName = m_rewards[randomIndex];
-						//std::string eName = "Coin";
 						auto reward = m_entityManager.addEntity(eName);
-						reward->addComponents<CTransform>(pos);
+						if (eName != "Coin") 
+						{
+							reward->addComponents<CTransform>(pos);
+							reward->addComponents<CState>("Emerging"); // Set initial state to Emerging for non-Coin rewards
+						}
+						else
+						{
+							reward->addComponents<CTransform>(Vec2(pos.x, pos.y - 16.5));
+						}
 						reward->addComponents<CAnimation>(m_game->getAssets().getAnimation(eName), true);
-						if (eName != "Coin") { reward->addComponents<CBoundingBox>(m_game->getAssets().getAnimation(eName).getSize()); }
 						reward->addComponents<CGravity>(m_playerConfig.GRAVITY);
 						if (eName == "Coin")
 						{

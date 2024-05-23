@@ -167,5 +167,6 @@ Tile    Ground      94  0.5
 Tile    Ground      95  0.5
 Tile    Ground      96  0.5
 Tile    Ground      97  0.5
-Player  2 6 16 16 2 6 10 0.5 Buster
-Goomba	15 6 18 1 46 9 49 9 80 2.5 END
+Tile	Piranha		21  3.7
+Player  2 6 14 16 2 6 10 0.5 Buster
+Goomba	12 6 18 1 46 9 49 9 80 2.5 END

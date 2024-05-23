@@ -12,15 +12,16 @@ public:
 class CTransform : public Components
 {
 public:
-	Vec2 pos	  = { 0.0, 0.0 };
-	Vec2 prevPos  = { 0.0, 0.0 };
-	Vec2 scale	  = { 1.0, 1.0 };
-	Vec2 velocity = { 0.0, 0.0 };
+	Vec2 pos	    = { 0.0, 0.0 };
+	Vec2 prevPos    = { 0.0, 0.0 };
+	Vec2 scale	    = { 1.0, 1.0 };
+	Vec2 velocity   = { 0.0, 0.0 };
+	Vec2 initialPos = { 0.0, 0.0 };
 	float angle	 = 0;
 
 	CTransform() {}
 	CTransform(const Vec2& p)
-		: pos(p), prevPos(p) {}
+		: pos(p), prevPos(p), initialPos(p){}
 	CTransform(const Vec2& p, const Vec2& sp, const Vec2& sc, float a)
 		: pos(p), prevPos(p), velocity(sp), scale(sc), angle(a) {}
 };
@@ -88,9 +89,9 @@ public:
 class CState : public Components
 {
 public:
-	std::string state = "MarioAir";
+	std::string state;
 
-	CState() {}
+	CState() : state("MarioAir") {}
 	CState(const std::string& s)
 		: state(s) {}
 };

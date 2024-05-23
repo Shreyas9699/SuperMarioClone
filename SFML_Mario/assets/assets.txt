@@ -38,7 +38,7 @@ Texture   TexGoomba     assets/textures/mario_assets/GOOMBA.png
 Texture   TexGoombaDead assets/textures/mario_assets/GOOMBA_CRUSHED.png
 Texture   TexTurtle     assets/textures/mario_assets/turtle.png
 Texture   TexTurtleFly  assets/textures/mario_assets/TURTLE_FLY.png
-Texture   TexPiranha    assets/textures/mario_assets/piranhaNew.png
+Texture   TexPiranha    assets/textures/mario_assets/piranha.png
 Animation MarioStand      TexStand        1     0
 Animation MarioRun        TexRun          3     5
 Animation MarioAir        TexAir          1     0
@@ -49,7 +49,7 @@ Animation SuperMarioAir   TexSupAir       1     0
 Animation SuperMarioAir   TexSupDuck      1     0
 Animation Turtle		  TexTurtle       2     10
 Animation TurtleFly		  TexTurtleFly    2     10
-Animation Piranha		  TexPiranha	  10    5
+Animation Piranha		  TexPiranha	  2     10
 Animation Goomba		  TexGoomba       2     10
 Animation GoombaDead      TexGoombaDead   1     0
 Animation Bullet          TexBullet       2     10
