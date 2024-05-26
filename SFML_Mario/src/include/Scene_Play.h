@@ -23,6 +23,7 @@ class Scene_Play : public Scene
 	bool					m_drawGrid			= false;
 	bool					m_StateChanged		= false;
 	bool					m_reloadingLevel    = false;
+	bool					m_isSuperMario      = false;
 	const Vec2				m_gridSize	= { 16.0f, 16 };
 	sf::Text				m_gridText;
 	long int				m_score = 0;
@@ -49,6 +50,7 @@ class Scene_Play : public Scene
 	void onLevelEnd();
 	void onEnd();
 	void reloadLevel();
+	void setBoundingBox(std::shared_ptr<Entity>& entity, const std::string& animationName);
 
 	// Systems
 	void sMovement();

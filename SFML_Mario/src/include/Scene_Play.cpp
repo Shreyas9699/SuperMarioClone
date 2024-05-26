@@ -136,7 +136,7 @@ void Scene_Play::spawnPlayer()
 
 	std::cout << "Creating Player entity\n";
 	m_player = m_entityManager.addEntity("player");
-	m_player->addComponents<CAnimation>(m_game->getAssets().getAnimation("MarioRun"), true);
+	m_player->addComponents<CAnimation>(m_game->getAssets().getAnimation("MarioStand"), true);
 	m_player->addComponents<CTransform>(gridToMidPixel(m_playerConfig.X, m_playerConfig.Y, m_player), Vec2(), Vec2(-1.0f, 1.0f), 0.0f);
 	m_player->addComponents<CInput>();
 	m_player->addComponents<CBoundingBox>(Vec2(m_playerConfig.CX, m_playerConfig.CY));
@@ -256,7 +256,12 @@ void Scene_Play::sMovement()
 
 	if (xSpeed == 0.0f)
 	{
-		if (m_player->getComponent<CState>().state != "MarioStand")
+		if (m_isSuperMario && m_player->getComponent<CState>().state != "SuperMarioStand")
+		{
+			m_player->getComponent<CState>().state = "SuperMarioStand";
+			m_StateChanged = true;
+		}
+		else if (!m_isSuperMario &&  m_player->getComponent<CState>().state != "MarioStand")
 		{
 			m_player->getComponent<CState>().state = "MarioStand";
 			m_StateChanged = true;
@@ -264,7 +269,12 @@ void Scene_Play::sMovement()
 	}
 	else
 	{
-		if (m_player->getComponent<CState>().state != "MarioRun")
+		if (m_isSuperMario && m_player->getComponent<CState>().state != "SuperMarioRun")
+		{
+			m_player->getComponent<CState>().state = "SuperMarioRun";
+			m_StateChanged = true;
+		}
+		else if (!m_isSuperMario && m_player->getComponent<CState>().state != "MarioRun")
 		{
 			m_player->getComponent<CState>().state = "MarioRun";
 			m_StateChanged = true;
@@ -426,6 +436,9 @@ void Scene_Play::sCollision()
 			if (name == "MushroomR")
 			{
 				// Turn into Super Mario
+				m_isSuperMario = true;
+				m_player->getComponent<CState>().state = "SuperMarioStand";
+				m_StateChanged = true;
 				e->destroy();
 			}
 
@@ -439,8 +452,17 @@ void Scene_Play::sCollision()
 			{
 				if (name == "Goomba")
 				{
-					playerDead();
-					spawnPlayer();
+					if (m_isSuperMario)
+					{
+						m_isSuperMario = false;
+						m_player->getComponent<CState>().state = "MarioStand";
+						m_StateChanged = true;
+					}
+					else
+					{
+						playerDead();
+						spawnPlayer();
+					}
 				}
 				pPos.x += pPrevPos.x < qPos.x ? -overlap.x : overlap.x;
 			}
@@ -532,6 +554,11 @@ void Scene_Play::sCollision()
 			if (m_player->getComponent<CState>().state != "MarioAir")
 			{
 				m_player->getComponent<CState>().state = "MarioAir";
+				m_StateChanged = true;
+			}
+			else if (m_isSuperMario && m_player->getComponent<CState>().state != "SuperMarioAir")
+			{
+				m_player->getComponent<CState>().state = "SuperMarioAir";
 				m_StateChanged = true;
 			}
 		}
@@ -705,7 +732,53 @@ void Scene_Play::sAnimation()
 {
 	if (m_StateChanged)
 	{
-		m_player->addComponents<CAnimation>(m_game->getAssets().getAnimation(m_player->getComponent<CState>().state), true);
+		m_StateChanged = false;
+		if (m_isSuperMario)
+		{
+			if (m_player->getComponent<CState>().state == "SuperMarioStand")
+			{
+				m_player->getComponent<CAnimation>().animation = m_game->getAssets().getAnimation("SuperMarioStand");
+				setBoundingBox(m_player, "SuperMarioStand");
+			}
+			else if (m_player->getComponent<CState>().state == "SuperMarioRun")
+			{
+				m_player->getComponent<CAnimation>().animation = m_game->getAssets().getAnimation("SuperMarioRun");
+				setBoundingBox(m_player, "SuperMarioRun");
+			}
+			else if (m_player->getComponent<CState>().state == "SuperMarioAir")
+			{
+				m_player->getComponent<CAnimation>().animation = m_game->getAssets().getAnimation("SuperMarioAir");
+				setBoundingBox(m_player, "SuperMarioAir");
+			}
+			else if (m_player->getComponent<CState>().state == "SuperMarioDuck")
+			{
+				m_player->getComponent<CAnimation>().animation = m_game->getAssets().getAnimation("SuperMarioDuck");
+				setBoundingBox(m_player, "SuperMarioDuck");
+			}
+		}
+		else // Normal state
+		{
+			if (m_player->getComponent<CState>().state == "MarioStand")
+			{
+				m_player->getComponent<CAnimation>().animation = m_game->getAssets().getAnimation("MarioStand");
+				setBoundingBox(m_player, "MarioStand");
+			}
+			else if (m_player->getComponent<CState>().state == "MarioRun")
+			{
+				m_player->getComponent<CAnimation>().animation = m_game->getAssets().getAnimation("MarioRun");
+				setBoundingBox(m_player, "MarioRun");
+			}
+			else if (m_player->getComponent<CState>().state == "MarioAir")
+			{
+				m_player->getComponent<CAnimation>().animation = m_game->getAssets().getAnimation("MarioAir");
+				setBoundingBox(m_player, "MarioAir");
+			}
+			else if (m_player->getComponent<CState>().state == "MarioDead")
+			{
+				m_player->getComponent<CAnimation>().animation = m_game->getAssets().getAnimation("MarioDead");
+				setBoundingBox(m_player, "MarioDead");
+			}
+		}
 	}
 
 	for (auto& e : m_entityManager.getEntities())
@@ -717,6 +790,15 @@ void Scene_Play::sAnimation()
 			e->destroy();
 		}
 	}
+}
+
+void Scene_Play::setBoundingBox(std::shared_ptr<Entity>& entity, const std::string& animationName)
+{
+	auto animation = m_game->getAssets().getAnimation(animationName);
+	auto& boundingBox = entity->getComponent<CBoundingBox>();
+	boundingBox.size.x = animation.getSize().x - 2.0f;
+	boundingBox.size.y = animation.getSize().y;
+	boundingBox.halfSize = boundingBox.size / 2.0f;
 }
 
 void Scene_Play::sRender()
@@ -784,7 +866,7 @@ void Scene_Play::sRender()
 		}
 	}
 
-
+	// draw textures
 	if (m_drawTexture)
 	{
 		for (auto& e : rewards)
@@ -856,6 +938,7 @@ void Scene_Play::sRender()
 		}
 	}
 
+	//draw grid
 	if (m_drawGrid) {
 		for (float x = m_gridSize.x; x <= width(); x += m_gridSize.x)
 		{

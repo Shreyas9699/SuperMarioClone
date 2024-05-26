@@ -86,6 +86,7 @@
     <Image Include="assets\textures\mario_assets\100Lable.png" />
     <Image Include="assets\textures\mario_assets\ONE_UP_LABEL.png" />
     <Image Include="assets\textures\mario_assets\THOUSANDlable.png" />
+    <Image Include="assets\textures\marioCharacter\MARIO_GROWING.png" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />

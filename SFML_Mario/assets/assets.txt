@@ -44,9 +44,9 @@ Animation MarioRun        TexRun          3     5
 Animation MarioAir        TexAir          1     0
 Animation MarioDead		  TexDead		  1     0
 Animation SuperMarioStand TexSupStand     1     0
-Animation SuperMarioRun   TexSupRun       3     10
+Animation SuperMarioRun   TexSupRun       3     5
 Animation SuperMarioAir   TexSupAir       1     0
-Animation SuperMarioAir   TexSupDuck      1     0
+Animation SuperMarioDuck  TexSupDuck      1     0
 Animation Turtle		  TexTurtle       2     10
 Animation TurtleFly		  TexTurtleFly    2     10
 Animation Piranha		  TexPiranha	  2     10

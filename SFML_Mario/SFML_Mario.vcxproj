@@ -163,6 +163,7 @@
     <Image Include="assets\textures\marioCharacter\MarioDead.png" />
     <Image Include="assets\textures\marioCharacter\MarioRun.png" />
     <Image Include="assets\textures\marioCharacter\MarioStand.png" />
+    <Image Include="assets\textures\marioCharacter\MARIO_GROWING.png" />
     <Image Include="assets\textures\marioCharacter\SUPER_MARIO_DUCK.png" />
     <Image Include="assets\textures\marioCharacter\SUPER_MARIO_JUMP.png" />
     <Image Include="assets\textures\marioCharacter\SUPER_MARIO_RUN.png" />

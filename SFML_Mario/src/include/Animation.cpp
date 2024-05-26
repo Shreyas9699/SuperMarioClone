@@ -56,3 +56,9 @@ bool Animation::hasEnded() const
 	size_t frame = m_currentFrame / m_speed;
 	return frame > m_frameCount;
 }
+
+void Animation::getDetails() const
+{
+	std::cout << "Name: " << m_name << ", Frame Count: " << m_frameCount << ", Current Frame: " 
+		<< m_currentFrame << ", Speed: " << m_speed << "\n";
+}
