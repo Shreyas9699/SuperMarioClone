@@ -1,6 +1,7 @@
 #include <fstream>
 #include <random>
 #include <thread>
+#include <cmath>
 #include "Scene_Play.h"
 #include "GameEngine.h"
 #include "Physics.h"
@@ -91,6 +92,12 @@ void Scene_Play::loadLevel(const std::string& levelPath)
 			e->addComponents<CAnimation>(m_game->getAssets().getAnimation(name), true);
 			(name != "Pole") ? e->addComponents<CBoundingBox>(m_game->getAssets().getAnimation(name).getSize()) :
 				e->addComponents<CBoundingBox>(Vec2(0.0f, m_game->getAssets().getAnimation(name).getSize().y));
+			if (name == "Piranha")
+			{
+				e->getComponent<CTransform>().velocity = Vec2(0, GoombaSPEED / 2.0f);
+				e->getComponent<CBoundingBox>().size = Vec2(e->getComponent<CBoundingBox>().size.x - 4.0f, e->getComponent<CBoundingBox>().size.y - 4.0f);
+				e->getComponent<CBoundingBox>().halfSize = Vec2(e->getComponent<CBoundingBox>().size.x / 2.0f, e->getComponent<CBoundingBox>().size.y / 2.0f);
+			}
 		}
 		else if (text == "Dec")
 		{
@@ -200,7 +207,7 @@ void Scene_Play::createGoomba(const Vec2& position)
 	auto goomba = m_entityManager.addEntity("Goomba");
 	goomba->addComponents<CAnimation>(m_game->getAssets().getAnimation("Goomba"), true);
 	goomba->addComponents<CTransform>(gridToMidPixel(position.x, position.y, goomba), Vec2(GoombaSPEED, 0.0f), Vec2(1.0f, 1.0f), 0.0f);
-	goomba->addComponents<CBoundingBox>(m_game->getAssets().getAnimation("Goomba").getSize());
+	goomba->addComponents<CBoundingBox>(Vec2(m_game->getAssets().getAnimation("Goomba").getSize().x - 2.0f, m_game->getAssets().getAnimation("Goomba").getSize().y));
 	goomba->addComponents<CGravity>(m_playerConfig.GRAVITY);
 }
 
@@ -310,6 +317,20 @@ void Scene_Play::sMovement()
 			transform.velocity.y = m_playerConfig.MAXSPEED;
 		}
 		// Update the position based on velocity
+		transform.prevPos = transform.pos;
+		transform.pos += transform.velocity;
+	}
+
+	// Piranha movement
+	for (auto& goomba : m_entityManager.getEntities("Piranha"))
+	{
+		auto& transform = goomba->getComponent<CTransform>();
+		auto& anim = goomba->getComponent<CAnimation>().animation;
+		int diff = transform.initialPos.y - transform.pos.y;
+		if (diff >= 0.01f || diff < (-1 * (anim.getSize().y + 24.0f)))
+		{
+			transform.velocity *= -1;
+		}
 		transform.prevPos = transform.pos;
 		transform.pos += transform.velocity;
 	}
@@ -436,6 +457,12 @@ void Scene_Play::sCollision()
 			if (name == "MushroomR")
 			{
 				// Turn into Super Mario
+				if (m_isSuperMario)
+				{
+					m_score += 1000;
+					e->destroy();
+					break;
+				}
 				m_isSuperMario = true;
 				m_player->getComponent<CState>().state = "SuperMarioStand";
 				m_StateChanged = true;
@@ -794,7 +821,7 @@ void Scene_Play::sAnimation()
 
 void Scene_Play::setBoundingBox(std::shared_ptr<Entity>& entity, const std::string& animationName)
 {
-	auto animation = m_game->getAssets().getAnimation(animationName);
+	auto& animation = m_game->getAssets().getAnimation(animationName);
 	auto& boundingBox = entity->getComponent<CBoundingBox>();
 	boundingBox.size.x = animation.getSize().x - 2.0f;
 	boundingBox.size.y = animation.getSize().y;
@@ -843,6 +870,7 @@ void Scene_Play::sRender()
 	std::vector<std::shared_ptr<Entity>> rewards;
 	std::vector<std::shared_ptr<Entity>> blocks;
 	std::vector<std::shared_ptr<Entity>> others;
+	std::vector<std::shared_ptr<Entity>> Piranha;
 
 	// Categorize entities
 	for (auto& e : m_entityManager.getEntities())
@@ -860,6 +888,10 @@ void Scene_Play::sRender()
 		{
 			blocks.push_back(e);
 		}
+		else if (e->getComponent<CAnimation>().animation.getName() == "Piranha")
+		{
+			Piranha.push_back(e);
+		}
 		else
 		{
 			others.push_back(e);
@@ -869,7 +901,19 @@ void Scene_Play::sRender()
 	// draw textures
 	if (m_drawTexture)
 	{
+		// Render rewards
 		for (auto& e : rewards)
+		{
+			auto& transform = e->getComponent<CTransform>();
+			auto& animation = e->getComponent<CAnimation>().animation;
+			animation.getSprite().setRotation(transform.angle);
+			animation.getSprite().setPosition(transform.pos.x, transform.pos.y);
+			animation.getSprite().setScale(transform.scale.x, transform.scale.y);
+			m_game->window().draw(animation.getSprite());
+		}
+
+		// Render Piranha
+		for (auto& e : Piranha)
 		{
 			auto& transform = e->getComponent<CTransform>();
 			auto& animation = e->getComponent<CAnimation>().animation;
