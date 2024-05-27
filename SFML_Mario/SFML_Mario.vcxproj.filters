@@ -61,8 +61,6 @@
     <Image Include="assets\textures\mario_assets\mushroom-green.png" />
     <Image Include="assets\textures\mario_assets\turtle.png" />
     <Image Include="assets\textures\marioCharacter\BulletNewS.png" />
-    <Image Include="assets\textures\mario_assets\piranha_up.png" />
-    <Image Include="assets\textures\mario_assets\piranhaNew.png" />
     <Image Include="assets\sheet.png" />
     <Image Include="assets\textures\marioCharacter\MarioDead.png" />
     <Image Include="assets\textures\marioCharacter\MarioStand.png" />
@@ -87,6 +85,8 @@
     <Image Include="assets\textures\mario_assets\ONE_UP_LABEL.png" />
     <Image Include="assets\textures\mario_assets\THOUSANDlable.png" />
     <Image Include="assets\textures\marioCharacter\MARIO_GROWING.png" />
+    <Image Include="assets\textures\mario_assets\TURTLE_SHELL.png" />
+    <Image Include="assets\textures\mario_assets\TURTLE_SHELL_TRANSITION.png" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />

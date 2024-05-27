@@ -222,8 +222,6 @@
     <Image Include="assets\textures\mario_assets\pipe-med.png" />
     <Image Include="assets\textures\mario_assets\pipe-small.png" />
     <Image Include="assets\textures\mario_assets\piranha.png" />
-    <Image Include="assets\textures\mario_assets\piranhaNew.png" />
-    <Image Include="assets\textures\mario_assets\piranha_up.png" />
     <Image Include="assets\textures\mario_assets\qfade.png" />
     <Image Include="assets\textures\mario_assets\secret-box.png" />
     <Image Include="assets\textures\mario_assets\solid.png" />
@@ -231,6 +229,8 @@
     <Image Include="assets\textures\mario_assets\THOUSANDlable.png" />
     <Image Include="assets\textures\mario_assets\turtle.png" />
     <Image Include="assets\textures\mario_assets\TURTLE_FLY.png" />
+    <Image Include="assets\textures\mario_assets\TURTLE_SHELL.png" />
+    <Image Include="assets\textures\mario_assets\TURTLE_SHELL_TRANSITION.png" />
     <Image Include="assets\textures\mario_assets\wall.png" />
     <Image Include="assets\textures\megaman\air64S.png" />
     <Image Include="assets\textures\megaman\marioRunning.jpeg" />

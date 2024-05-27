@@ -12,6 +12,12 @@ class Scene_Play : public Scene
 		std::string WEAPON;
 	};
 
+	struct Vec2Comparator {
+		bool operator()(const Vec2& lhs, const Vec2& rhs) const {
+			return lhs.x > rhs.x; // Descending order based on x value
+		}
+	};
+
 	const float GoombaSPEED = -1.0f;
 	const float YSPEED = 1.0f;
 
@@ -34,6 +40,7 @@ class Scene_Play : public Scene
 	std::chrono::time_point<std::chrono::high_resolution_clock> pauseStartTime = std::chrono::high_resolution_clock::now();;
 	
 	std::vector<Vec2> m_goombaPositions;
+	std::vector<Vec2> m_turtlePositions;
 	std::vector<std::string> m_rewards		= { "Coin", "Star", "MushroomR", "MushroomG" };
 	//Probability of selecting each reward is distributed as below
 	// 50% for Coin, 25% for Star, and 12.5% each for MushroomR and MushroomG
@@ -45,6 +52,7 @@ class Scene_Play : public Scene
 	void spawnPlayer();
 	void spawnEnemy();
 	void createGoomba(const Vec2& position);
+	void createTurtle(const Vec2& position);
 	void playerDead();
 	void spawnBullet(std::shared_ptr<Entity>& entity);
 	void onLevelEnd();

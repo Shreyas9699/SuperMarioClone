@@ -25,10 +25,14 @@ Dec		BushBig 	 118  0.5
 Dec		CloudBig 	 115 10
 Dec		Castle 		 153 3.5
 Tile	PipeB        15  3
+Tile	Piranha		 15  5.7
 Tile    PipeS        35  2
 Tile    PipeM        51  2.5
+Tile	Piranha		 51  4.7
 Tile    PipeB        70  3
+Tile	Piranha		 70  5.7
 Tile    PipeS        124  2
+Tile	Piranha		 124  3.7
 Tile    PipeM        90  2.5
 Tile	Ground       0 0.5
 Tile	Ground       1 0.5
@@ -69,10 +73,7 @@ Tile	Ground       35 0.5
 Tile	Ground       36 0.5
 Tile	Ground       37 0.5
 Tile	Ground       38 0.5
-Tile	Block        38 1.5
 Tile	Ground       39 0.5
-Tile    Block        39 1.5
-Tile    Block        39 2.5
 Tile    Block        45 2.5
 Tile    Block        45 1.5
 Tile	Ground       45 0.5
@@ -219,4 +220,5 @@ Tile	Ground       153 0.5
 Tile	Ground       154 0.5
 Tile	Ground       155 0.5
 Tile    Block        147 1.5
-Player  2 6 16 16 5 8 15 0.8 Buster
+Player  2 6 15 16 2 6 10 0.5 Buster
+Goomba	15 1 25 1 46 1 68 1 80 1 90 1 100 1 110 1 END

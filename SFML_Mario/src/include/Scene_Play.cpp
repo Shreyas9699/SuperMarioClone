@@ -119,7 +119,6 @@ void Scene_Play::loadLevel(const std::string& levelPath)
 		}
 		else if (text == "Goomba")
 		{
-			std::cout << "Creating Goomba Position vector \n";
 			float x, y;
 			while (file >> text && text != "END")
 			{
@@ -128,9 +127,25 @@ void Scene_Play::loadLevel(const std::string& levelPath)
 				{
 					file >> y;
 					m_goombaPositions.push_back(Vec2(x, y));
+					std::push_heap(m_goombaPositions.begin(), m_goombaPositions.end(), Vec2Comparator());
 				}
 			}
 			std::cout << "Done Creating Goomba Position vector, total number of differen pos: " << m_goombaPositions.size() << std::endl;
+		}
+		else if (text == "Turtle")
+		{
+			float x, y;
+			while (file >> text && text != "END")
+			{
+				std::istringstream ss(text);
+				if (ss >> x)
+				{
+					file >> y;
+					m_turtlePositions.push_back(Vec2(x, y));
+					std::push_heap(m_turtlePositions.begin(), m_turtlePositions.end(), Vec2Comparator());
+				}
+			}
+			std::cout << "Done Creating Turtle Position vector, total number of differen pos: " << m_turtlePositions.size() << std::endl;
 		}
 	}
 	startTimer = std::chrono::high_resolution_clock::now();
@@ -180,6 +195,7 @@ void Scene_Play::spawnEnemy()
 	float viewT = currentView.getCenter().y - (currentView.getCenter().y / 2.0f);
 	float viewB = currentView.getCenter().y + (currentView.getCenter().y / 2.0f);
 	
+	// creating Goomba
 	auto dummyGoomba = m_entityManager.addEntity("dummyGoomba");
 	dummyGoomba->addComponents<CAnimation>(m_game->getAssets().getAnimation("Goomba"), false);
 
@@ -199,6 +215,27 @@ void Scene_Play::spawnEnemy()
 		}
 	}
 	dummyGoomba->destroy();
+
+	// creating Turtle
+	auto dummyTurtle = m_entityManager.addEntity("dummyTurtle");
+	dummyTurtle->addComponents<CAnimation>(m_game->getAssets().getAnimation("Turtle"), false);
+
+	auto itr = m_turtlePositions.begin();
+	while (itr != m_turtlePositions.end())
+	{
+		Vec2 pixelPos = gridToMidPixel(itr->x, itr->y, dummyTurtle);
+
+		if (pixelPos.x >= viewL && pixelPos.x <= viewR && pixelPos.y >= viewT && pixelPos.y <= viewB)
+		{
+			createTurtle(*itr);
+			itr = m_turtlePositions.erase(itr);
+		}
+		else
+		{
+			break;
+		}
+	}
+	dummyTurtle->destroy();
 }
 
 void Scene_Play::createGoomba(const Vec2& position)
@@ -208,6 +245,16 @@ void Scene_Play::createGoomba(const Vec2& position)
 	goomba->addComponents<CAnimation>(m_game->getAssets().getAnimation("Goomba"), true);
 	goomba->addComponents<CTransform>(gridToMidPixel(position.x, position.y, goomba), Vec2(GoombaSPEED, 0.0f), Vec2(1.0f, 1.0f), 0.0f);
 	goomba->addComponents<CBoundingBox>(Vec2(m_game->getAssets().getAnimation("Goomba").getSize().x - 2.0f, m_game->getAssets().getAnimation("Goomba").getSize().y));
+	goomba->addComponents<CGravity>(m_playerConfig.GRAVITY);
+}
+
+void Scene_Play::createTurtle(const Vec2& position)
+{
+	std::cout << "Creating Turtle entity at  position " << position << "\n";
+	auto goomba = m_entityManager.addEntity("Turtle");
+	goomba->addComponents<CAnimation>(m_game->getAssets().getAnimation("Turtle"), true);
+	goomba->addComponents<CTransform>(gridToMidPixel(position.x, position.y, goomba), Vec2(GoombaSPEED, YSPEED), Vec2(1.0f, 1.0f), 0.0f);
+	goomba->addComponents<CBoundingBox>(m_game->getAssets().getAnimation("Turtle").getSize());
 	goomba->addComponents<CGravity>(m_playerConfig.GRAVITY);
 }
 
@@ -321,13 +368,29 @@ void Scene_Play::sMovement()
 		transform.pos += transform.velocity;
 	}
 
-	// Piranha movement
-	for (auto& goomba : m_entityManager.getEntities("Piranha"))
+	// Turtle movement
+	for (auto& turtle : m_entityManager.getEntities("Turtle"))
 	{
-		auto& transform = goomba->getComponent<CTransform>();
-		auto& anim = goomba->getComponent<CAnimation>().animation;
+		auto& transform = turtle->getComponent<CTransform>();
+		transform.velocity.y += turtle->getComponent<CGravity>().gravity;
+
+		// Cap the vertical velocity
+		if (transform.velocity.y >= m_playerConfig.MAXSPEED)
+		{
+			transform.velocity.y = m_playerConfig.MAXSPEED;
+		}
+		// Update the position based on velocity
+		transform.prevPos = transform.pos;
+		transform.pos += transform.velocity;
+	}
+
+	// Piranha movement
+	for (auto& piranha : m_entityManager.getEntities("Piranha"))
+	{
+		auto& transform = piranha->getComponent<CTransform>();
+		auto& anim = piranha->getComponent<CAnimation>().animation;
 		int diff = transform.initialPos.y - transform.pos.y;
-		if (diff >= 0.01f || diff < (-1 * (anim.getSize().y + 24.0f)))
+		if (diff >= 0.01f || diff < (-1 * (anim.getSize().y + 22.0f)))
 		{
 			transform.velocity *= -1;
 		}
@@ -477,7 +540,7 @@ void Scene_Play::sCollision()
 
 			if (prevOverlap.y > 0.0f)
 			{
-				if (name == "Goomba")
+				if (name == "Goomba" || name == "Turtle")
 				{
 					if (m_isSuperMario)
 					{
@@ -569,6 +632,15 @@ void Scene_Play::sCollision()
 						eGBDead->addComponents<CTransform>(pos);
 						eGBDead->addComponents<CAnimation>(m_game->getAssets().getAnimation("GoombaDead"), false);
 						eGBDead->addComponents<CLifeSpan>(0.5f);
+					}
+					else if (name == "Turtle")
+					{
+						Vec2& pos = e->getComponent<CTransform>().pos;
+						e->destroy();
+						auto eGBDead = m_entityManager.addEntity("TurtleShell");
+						eGBDead->addComponents<CTransform>(pos);
+						eGBDead->addComponents<CAnimation>(m_game->getAssets().getAnimation("TurtleShell"), false);
+						eGBDead->addComponents<CLifeSpan>(4.0f);
 					}
 					pPos.y -= overlap.y;
 					m_player->getComponent<CInput>().canJump = true;
@@ -669,6 +741,7 @@ void Scene_Play::sCollision()
 				// Similar collision responses as the player
 				if (prevOverlap.y > 0.0f)
 				{
+					goomba->getComponent<CTransform>().scale.x *= -1.0f;
 					gPos.x += gPrevPos.x < ePos.x ? -overlap.x : overlap.x;
 					// Change direction upon horizontal collision
 					goomba->getComponent<CTransform>().velocity.x *= -1;
@@ -696,6 +769,62 @@ void Scene_Play::sCollision()
 					//gPos.x = 0.0f;
 					//goomba->getComponent<CTransform>().velocity.x *= -1;
 					goomba->destroy();
+				}
+			}
+		}
+	}
+
+	// Turtle
+	for (auto& turtle : m_entityManager.getEntities("Turtle"))
+	{
+		auto& tPos = turtle->getComponent<CTransform>().pos;
+
+		for (auto& e : m_entityManager.getEntities())
+		{
+			if (!e->hasComponent<CBoundingBox>() || !e->hasComponent<CTransform>() || e == turtle)
+			{
+				continue;
+			}
+			Vec2 overlap = Physics::GetOverlap(e, turtle);
+			Vec2 prevOverlap = Physics::GetPreviousOverlap(e, turtle);
+
+			if (!(overlap.x < 0.0f || overlap.y < 0.0f))
+			{
+				auto& ePos = e->getComponent<CTransform>().pos;
+				auto& tPrevPos = turtle->getComponent<CTransform>().prevPos;
+				const std::string& name = e->getComponent<CAnimation>().animation.getName();
+
+				// Similar collision responses as the player
+				if (prevOverlap.y > 0.0f)
+				{
+					tPos.x += tPrevPos.x < ePos.x ? -overlap.x : overlap.x;
+					// Change direction upon horizontal collision
+					turtle->getComponent<CTransform>().scale.x *= -1.0f;
+					turtle->getComponent<CTransform>().velocity.x *= -1;
+				}
+				if (prevOverlap.x > 0.0f)
+				{
+					if (tPrevPos.y > ePos.y)
+					{
+						tPos.y += overlap.y;
+					}
+					else
+					{
+						tPos.y -= overlap.y;
+					}
+					turtle->getComponent<CTransform>().velocity.y = 0.0f;
+				}
+
+				// Handle falling out of the scene
+				if (tPos.y > height())
+				{
+					turtle->destroy();
+				}
+				if (tPos.x < 0.0f)
+				{
+					//gPos.x = 0.0f;
+					//goomba->getComponent<CTransform>().velocity.x *= -1;
+					turtle->destroy();
 				}
 			}
 		}
@@ -867,10 +996,11 @@ void Scene_Play::sRender()
 	m_game->window().setView(view);
 
 	// Lists to store different types of entities
+	std::vector<std::shared_ptr<Entity>> dec;
 	std::vector<std::shared_ptr<Entity>> rewards;
 	std::vector<std::shared_ptr<Entity>> blocks;
 	std::vector<std::shared_ptr<Entity>> others;
-	std::vector<std::shared_ptr<Entity>> Piranha;
+	std::vector<std::shared_ptr<Entity>> enemies;
 
 	// Categorize entities
 	for (auto& e : m_entityManager.getEntities())
@@ -888,9 +1018,13 @@ void Scene_Play::sRender()
 		{
 			blocks.push_back(e);
 		}
-		else if (e->getComponent<CAnimation>().animation.getName() == "Piranha")
+		else if (e->getComponent<CAnimation>().animation.getName() == "Piranha" || e->getComponent<CAnimation>().animation.getName() == "Turtle")
 		{
-			Piranha.push_back(e);
+			enemies.push_back(e);
+		}
+		else if (!e->hasComponent<CBoundingBox>())
+		{
+			dec.push_back(e);
 		}
 		else
 		{
@@ -901,6 +1035,18 @@ void Scene_Play::sRender()
 	// draw textures
 	if (m_drawTexture)
 	{
+
+		// Render dec
+		for (auto& e : dec)
+		{
+			auto& transform = e->getComponent<CTransform>();
+			auto& animation = e->getComponent<CAnimation>().animation;
+			animation.getSprite().setRotation(transform.angle);
+			animation.getSprite().setPosition(transform.pos.x, transform.pos.y);
+			animation.getSprite().setScale(transform.scale.x, transform.scale.y);
+			m_game->window().draw(animation.getSprite());
+		}
+
 		// Render rewards
 		for (auto& e : rewards)
 		{
@@ -913,7 +1059,7 @@ void Scene_Play::sRender()
 		}
 
 		// Render Piranha
-		for (auto& e : Piranha)
+		for (auto& e : enemies)
 		{
 			auto& transform = e->getComponent<CTransform>();
 			auto& animation = e->getComponent<CAnimation>().animation;
