@@ -2,6 +2,7 @@
 #include <string>
 #include <memory>
 #include <chrono>
+#include <queue>
 #include "Entity.h"
 #include "Scene.h"
 
@@ -20,6 +21,8 @@ class Scene_Play : public Scene
 
 	const float GoombaSPEED = -1.0f;
 	const float YSPEED = 1.0f;
+	const float shellSpeed = 2.0f;
+	float TurtlePrevVel, TurtlePrevScale;
 
 	std::shared_ptr<Entity>	m_player;
 	std::string				m_levelPath;
@@ -39,8 +42,8 @@ class Scene_Play : public Scene
 	std::chrono::time_point<std::chrono::high_resolution_clock> startTimer;
 	std::chrono::time_point<std::chrono::high_resolution_clock> pauseStartTime = std::chrono::high_resolution_clock::now();;
 	
-	std::vector<Vec2> m_goombaPositions;
-	std::vector<Vec2> m_turtlePositions;
+	std::priority_queue<Vec2, std::vector<Vec2>, Vec2Comparator> m_goombaPositions;
+	std::priority_queue<Vec2, std::vector<Vec2>, Vec2Comparator> m_turtlePositions;
 	std::vector<std::string> m_rewards		= { "Coin", "Star", "MushroomR", "MushroomG" };
 	//Probability of selecting each reward is distributed as below
 	// 50% for Coin, 25% for Star, and 12.5% each for MushroomR and MushroomG

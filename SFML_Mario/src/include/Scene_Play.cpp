@@ -1,6 +1,5 @@
 #include <fstream>
 #include <random>
-#include <thread>
 #include <cmath>
 #include "Scene_Play.h"
 #include "GameEngine.h"
@@ -126,8 +125,7 @@ void Scene_Play::loadLevel(const std::string& levelPath)
 				if (ss >> x)
 				{
 					file >> y;
-					m_goombaPositions.push_back(Vec2(x, y));
-					std::push_heap(m_goombaPositions.begin(), m_goombaPositions.end(), Vec2Comparator());
+					m_goombaPositions.push(Vec2(x, y));
 				}
 			}
 			std::cout << "Done Creating Goomba Position vector, total number of differen pos: " << m_goombaPositions.size() << std::endl;
@@ -141,8 +139,7 @@ void Scene_Play::loadLevel(const std::string& levelPath)
 				if (ss >> x)
 				{
 					file >> y;
-					m_turtlePositions.push_back(Vec2(x, y));
-					std::push_heap(m_turtlePositions.begin(), m_turtlePositions.end(), Vec2Comparator());
+					m_turtlePositions.push(Vec2(x, y));
 				}
 			}
 			std::cout << "Done Creating Turtle Position vector, total number of differen pos: " << m_turtlePositions.size() << std::endl;
@@ -199,15 +196,16 @@ void Scene_Play::spawnEnemy()
 	auto dummyGoomba = m_entityManager.addEntity("dummyGoomba");
 	dummyGoomba->addComponents<CAnimation>(m_game->getAssets().getAnimation("Goomba"), false);
 
-	auto it = m_goombaPositions.begin();
-	while (it != m_goombaPositions.end())
+	while (!m_goombaPositions.empty())
 	{
-		Vec2 pixelPos = gridToMidPixel(it->x, it->y, dummyGoomba);
+		Vec2 position = m_goombaPositions.top();
+
+		Vec2 pixelPos = gridToMidPixel(position.x, position.y, dummyGoomba);
 
 		if (pixelPos.x >= viewL && pixelPos.x <= viewR && pixelPos.y >= viewT && pixelPos.y <= viewB)
 		{
-			createGoomba(*it);
-			it = m_goombaPositions.erase(it);
+			createGoomba(position);
+			m_goombaPositions.pop();
 		}
 		else
 		{
@@ -220,15 +218,16 @@ void Scene_Play::spawnEnemy()
 	auto dummyTurtle = m_entityManager.addEntity("dummyTurtle");
 	dummyTurtle->addComponents<CAnimation>(m_game->getAssets().getAnimation("Turtle"), false);
 
-	auto itr = m_turtlePositions.begin();
-	while (itr != m_turtlePositions.end())
+	while (!m_turtlePositions.empty())
 	{
-		Vec2 pixelPos = gridToMidPixel(itr->x, itr->y, dummyTurtle);
+		Vec2 position = m_turtlePositions.top();
+
+		Vec2 pixelPos = gridToMidPixel(position.x, position.y, dummyTurtle);
 
 		if (pixelPos.x >= viewL && pixelPos.x <= viewR && pixelPos.y >= viewT && pixelPos.y <= viewB)
 		{
-			createTurtle(*itr);
-			itr = m_turtlePositions.erase(itr);
+			createTurtle(position);
+			m_turtlePositions.pop();
 		}
 		else
 		{
@@ -250,12 +249,13 @@ void Scene_Play::createGoomba(const Vec2& position)
 
 void Scene_Play::createTurtle(const Vec2& position)
 {
-	std::cout << "Creating Turtle entity at  position " << position << "\n";
-	auto goomba = m_entityManager.addEntity("Turtle");
-	goomba->addComponents<CAnimation>(m_game->getAssets().getAnimation("Turtle"), true);
-	goomba->addComponents<CTransform>(gridToMidPixel(position.x, position.y, goomba), Vec2(GoombaSPEED, YSPEED), Vec2(1.0f, 1.0f), 0.0f);
-	goomba->addComponents<CBoundingBox>(m_game->getAssets().getAnimation("Turtle").getSize());
-	goomba->addComponents<CGravity>(m_playerConfig.GRAVITY);
+	std::cout << "Creating Turtle entity at position " << position << "\n";
+	auto turtle = m_entityManager.addEntity("Turtle");
+	turtle->addComponents<CAnimation>(m_game->getAssets().getAnimation("Turtle"), true);
+	turtle->addComponents<CTransform>(gridToMidPixel(position.x, position.y, turtle), Vec2(GoombaSPEED, 0.0f), Vec2(1.0f, 1.0f), 0.0f);
+	turtle->addComponents<CBoundingBox>(m_game->getAssets().getAnimation("Turtle").getSize());
+	turtle->addComponents<CGravity>(m_playerConfig.GRAVITY);
+	turtle->addComponents<CState>("Walking"); // Add the CState component with the initial state as "walking"
 }
 
 void Scene_Play::playerDead()
@@ -466,6 +466,17 @@ void Scene_Play::sLifeSpan()
 		{
 			if (e->getComponent<CLifeSpan>().lifeSpan < e->getComponent<CLifeSpan>().clock.getElapsedTime().asSeconds())
 			{
+				if (e->getComponent<CState>().state == "Shell")
+				{
+					e->removeComponent<CLifeSpan>();
+					e->getComponent<CState>().state = "Walking";
+					e->addComponents<CAnimation>(m_game->getAssets().getAnimation("Turtle"), true);
+					e->getComponent<CBoundingBox>().size = m_game->getAssets().getAnimation("Turtle").getSize();
+					e->getComponent<CBoundingBox>().halfSize = m_game->getAssets().getAnimation("Turtle").getSize() / 2.0f;
+					e->getComponent<CTransform>().velocity = Vec2(TurtlePrevVel, 0.0f);
+					e->getComponent<CTransform>().scale = Vec2(TurtlePrevScale, 1.0f);
+					continue;
+				}
 				e->destroy();
 			}
 		}
@@ -635,12 +646,14 @@ void Scene_Play::sCollision()
 					}
 					else if (name == "Turtle")
 					{
-						Vec2& pos = e->getComponent<CTransform>().pos;
-						e->destroy();
-						auto eGBDead = m_entityManager.addEntity("TurtleShell");
-						eGBDead->addComponents<CTransform>(pos);
-						eGBDead->addComponents<CAnimation>(m_game->getAssets().getAnimation("TurtleShell"), false);
-						eGBDead->addComponents<CLifeSpan>(4.0f);
+						TurtlePrevVel = e->getComponent<CTransform>().velocity.x;
+						TurtlePrevScale = e->getComponent<CTransform>().scale.x;
+						e->getComponent<CState>().state = "Shell";
+						e->addComponents<CAnimation>().animation =  m_game->getAssets().getAnimation("TurtleShell");
+						e->getComponent<CBoundingBox>().size = m_game->getAssets().getAnimation("TurtleShell").getSize();
+						e->getComponent<CBoundingBox>().halfSize = m_game->getAssets().getAnimation("TurtleShell").getSize() / 2.0f;
+						e->getComponent<CTransform>().velocity = Vec2(0.0f, 0.0f);
+						e->addComponents<CLifeSpan>(6.0f);
 					}
 					pPos.y -= overlap.y;
 					m_player->getComponent<CInput>().canJump = true;
@@ -800,7 +813,7 @@ void Scene_Play::sCollision()
 					tPos.x += tPrevPos.x < ePos.x ? -overlap.x : overlap.x;
 					// Change direction upon horizontal collision
 					turtle->getComponent<CTransform>().scale.x *= -1.0f;
-					turtle->getComponent<CTransform>().velocity.x *= -1;
+					turtle->getComponent<CTransform>().velocity.x *= -1.0f;
 				}
 				if (prevOverlap.x > 0.0f)
 				{
@@ -812,7 +825,6 @@ void Scene_Play::sCollision()
 					{
 						tPos.y -= overlap.y;
 					}
-					turtle->getComponent<CTransform>().velocity.y = 0.0f;
 				}
 
 				// Handle falling out of the scene
@@ -1198,7 +1210,13 @@ void Scene_Play::reloadLevel()
 {
     // Clear all entities except the player
     m_entityManager.clearAllEntities();
-    m_goombaPositions.clear();
+   
+	// Clear the enemy position priority queues
+	std::priority_queue<Vec2, std::vector<Vec2>, Vec2Comparator> emptyGoombaQueue;
+	std::swap(m_goombaPositions, emptyGoombaQueue);
+
+	std::priority_queue<Vec2, std::vector<Vec2>, Vec2Comparator> emptyTurtleQueue;
+	std::swap(m_turtlePositions, emptyTurtleQueue);
 
     // Reload level from the beginning
     loadLevel(m_levelPath);
