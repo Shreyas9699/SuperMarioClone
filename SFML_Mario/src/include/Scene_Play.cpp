@@ -93,7 +93,16 @@ void Scene_Play::loadLevel(const std::string& levelPath)
 				e->addComponents<CBoundingBox>(Vec2(0.0f, m_game->getAssets().getAnimation(name).getSize().y));
 			if (name == "Piranha")
 			{
-				e->getComponent<CTransform>().velocity = Vec2(0, GoombaSPEED / 2.0f);
+				// Seed the random number generator
+				std::random_device rd;
+				srand(rd());
+				// Generate a random float between -0.5 and 0.5
+				float randomFactor = (rand() % 1000 / 1000.0f) - 0.5f;
+				// Adjust the speed by the random factor to make it asynchronous
+				float adjustedSpeed = (GoombaSPEED / 2.0f) * (1.0f + randomFactor);
+				std::cout << "rand val: " << randomFactor << " Final speed: " << adjustedSpeed << std::endl;
+
+				e->getComponent<CTransform>().velocity = Vec2(0, adjustedSpeed);
 				e->getComponent<CBoundingBox>().size = Vec2(e->getComponent<CBoundingBox>().size.x - 4.0f, e->getComponent<CBoundingBox>().size.y - 4.0f);
 				e->getComponent<CBoundingBox>().halfSize = Vec2(e->getComponent<CBoundingBox>().size.x / 2.0f, e->getComponent<CBoundingBox>().size.y / 2.0f);
 			}
@@ -551,7 +560,7 @@ void Scene_Play::sCollision()
 
 			if (prevOverlap.y > 0.0f)
 			{
-				if (name == "Goomba" || name == "Turtle")
+				if (name == "Goomba")
 				{
 					if (m_isSuperMario)
 					{
@@ -563,6 +572,41 @@ void Scene_Play::sCollision()
 					{
 						playerDead();
 						spawnPlayer();
+					}
+				}
+				else if (name == "Turtle")
+				{
+					if (e->getComponent<CState>().state == "Walking")
+					{
+						if (m_isSuperMario)
+						{
+							m_isSuperMario = false;
+							m_player->getComponent<CState>().state = "MarioStand";
+							m_StateChanged = true;
+						}
+						else
+						{
+							playerDead();
+							spawnPlayer();
+						}
+					}
+					else  if (e->getComponent<CState>().state == "Shell")// Shell state
+					{
+						std::cout << "Shell state turtle and player collision \n";
+						if (prevOverlap.x > 0.0f) 
+						{
+							std::cout << "Hit from left, so move right \n";
+							// move the shell to right
+							e->removeComponent<CLifeSpan>();
+							e->getComponent<CTransform>().velocity.x = -1 * TurtlePrevVel * 2;
+						}
+						else if (prevOverlap.x < 0.0f) 
+						{
+							std::cout << "Hit from right, so move left \n";
+							// move the shell to right
+							e->removeComponent<CLifeSpan>();
+							e->getComponent<CTransform>().velocity.x = TurtlePrevVel * 2;
+						}
 					}
 				}
 				pPos.x += pPrevPos.x < qPos.x ? -overlap.x : overlap.x;
@@ -639,6 +683,7 @@ void Scene_Play::sCollision()
 						//else {
 						//	std::cout << "Sound Not Playing (After Playing). \n";  // Added message
 						//}
+						m_score += 100;
 						auto eGBDead = m_entityManager.addEntity("GoombaDead");
 						eGBDead->addComponents<CTransform>(pos);
 						eGBDead->addComponents<CAnimation>(m_game->getAssets().getAnimation("GoombaDead"), false);
@@ -722,6 +767,11 @@ void Scene_Play::sCollision()
 						e->destroy();
 						eb->destroy();
 					}
+				else if (name == "Turtle")
+				{
+					e->destroy();
+					eb->destroy();
+				}
 				else
 					{
 						eb->destroy();
