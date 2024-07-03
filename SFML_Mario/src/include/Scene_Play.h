@@ -2,7 +2,9 @@
 #include <string>
 #include <memory>
 #include <chrono>
+#include <thread>
 #include <queue>
+#include <SFML/Audio.hpp>
 #include "Entity.h"
 #include "Scene.h"
 
@@ -38,6 +40,7 @@ class Scene_Play : public Scene
 	long int				m_score = 0;
 	sf::Text				m_scoreText;
 	sf::Text				m_timerText;
+	sf::Sound               m_sound;
 
 	std::chrono::time_point<std::chrono::high_resolution_clock> startTimer;
 	std::chrono::time_point<std::chrono::high_resolution_clock> pauseStartTime = std::chrono::high_resolution_clock::now();;

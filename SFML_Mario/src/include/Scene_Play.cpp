@@ -269,35 +269,12 @@ void Scene_Play::createTurtle(const Vec2& position)
 
 void Scene_Play::playerDead()
 {
-	std::cout << "Player Death function START\n";
-	sf::SoundBuffer		playerDead;
-	sf::Sound			playerDeadS;
-	// load the sound effects
-	if (!playerDead.loadFromFile("assets/audio/death.wav"))
-	{
-		std::cout << "Failed to load audio file\n";
-		exit(-1);
-	}
-	playerDeadS.setBuffer(playerDead);
-	if (playerDeadS.getBuffer() == nullptr)
-	{
-		std::cout << "Failed to set buffer\n";
-		exit(-1);
-	}
-	playerDeadS.setVolume(100.0f);
-	playerDeadS.play();
-	if (playerDeadS.getStatus() == sf::Sound::Stopped)
-	{
-		std::cout << "Sound is stopped\n";
-		exit(-1);
-	}
 	auto pos = m_player->getComponent<CTransform>().pos;
 	m_player->destroy();
 	auto deadPlayer = m_entityManager.addEntity("MarioDead");
 	deadPlayer->addComponents<CTransform>(pos, Vec2(0.0f, YSPEED), Vec2(-1.0f, 1.0f), 0.0f);
 	deadPlayer->addComponents<CAnimation>(m_game->getAssets().getAnimation("MarioDead"), true);
-	deadPlayer->addComponents<CLifeSpan>(1.5);
-	std::cout << "Player Death function END\n";
+	deadPlayer->addComponents<CLifeSpan>(1.5f);
 }
 
 void Scene_Play::update()
@@ -325,6 +302,8 @@ void Scene_Play::sMovement()
 	{
 		transform.velocity.y -= m_playerConfig.JUMP;
 		input.canJump = false;
+		m_sound.setBuffer(m_game->getAssets().getSound("MarioAir"));
+		m_sound.play();
 	}
 
 	float xSpeed = 0.0f;
@@ -561,11 +540,18 @@ void Scene_Play::sCollision()
 			if (name == "MushroomR")
 			{
 				// Turn into Super Mario
+				m_sound.setBuffer(m_game->getAssets().getSound("RedMushroom"));
+				m_sound.play();
 				if (m_isSuperMario)
 				{
 					m_score += 1000;
 					e->destroy();
 					break;
+				}
+				else
+				{
+					m_sound.setBuffer(m_game->getAssets().getSound("MarioToSuper"));
+					m_sound.play();
 				}
 				m_isSuperMario = true;
 				m_player->getComponent<CState>().state = "SuperMarioStand";
@@ -576,6 +562,8 @@ void Scene_Play::sCollision()
 			if (name == "MushroomG")
 			{
 				// Give Extra lives
+				m_sound.setBuffer(m_game->getAssets().getSound("GreenMushroom"));
+				m_sound.play();
 				e->destroy();
 			}
 
@@ -593,6 +581,8 @@ void Scene_Play::sCollision()
 					else
 					{
 						playerDead();
+						m_sound.setBuffer(m_game->getAssets().getSound("MarioDeath"));
+						m_sound.play();
 						spawnPlayer();
 					}
 				}
@@ -677,6 +667,8 @@ void Scene_Play::sCollision()
 						reward->addComponents<CGravity>(m_playerConfig.GRAVITY);
 						if (eName == "Coin")
 						{
+							m_sound.setBuffer(m_game->getAssets().getSound("Coin"));
+							m_sound.play();
 							m_score += 100;
 							reward->addComponents<CLifeSpan>(0.5f);
 						}
@@ -700,6 +692,9 @@ void Scene_Play::sCollision()
 					if (name == "Goomba")
 					{
 						Vec2& pos = e->getComponent<CTransform>().pos;
+						m_sound.setBuffer(m_game->getAssets().getSound("StompGoomba"));
+						m_sound.play();
+						std::this_thread::sleep_for(std::chrono::milliseconds(10));
 						e->destroy();
 						m_score += 100;
 						auto eGBDead = m_entityManager.addEntity("GoombaDead");
@@ -708,9 +703,9 @@ void Scene_Play::sCollision()
 						eGBDead->addComponents<CLifeSpan>(0.5f);
 
 						// player jumps
-						m_player->getComponent<CInput>().up = true;
-						m_player->getComponent<CInput>().canJump = false;
-						m_player->getComponent<CTransform>().velocity.y -= m_playerConfig.JUMP / 10;
+						//m_player->getComponent<CInput>().up = true;
+						//m_player->getComponent<CInput>().canJump = false;
+						m_player->getComponent<CTransform>().velocity.y = m_playerConfig.JUMP;
 						
 					}
 					else if (name == "Turtle")
@@ -1285,7 +1280,10 @@ void Scene_Play::sDoAction(const Action& action)
 		else if (action.name() == "TOGGLE_GRID")		{ m_drawGrid = !m_drawGrid; }
 		else if (action.name() == "PAUSE")				{ m_paused = !m_paused; }
 		else if (action.name() == "QUIT")				{ onEnd(); }
-		else if (action.name() == "UP")					{ input.up = true; }
+		else if (action.name() == "UP")					
+		{ 
+			input.up = true;
+		}
 		else if (action.name() == "DOWN")				{ input.down = true; }
 		else if (action.name() == "RIGHT")				{ input.right = true; }
 		else if (action.name() == "LEFT")				{ input.left = true; }
