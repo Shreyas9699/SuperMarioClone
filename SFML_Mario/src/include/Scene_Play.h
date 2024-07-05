@@ -35,13 +35,17 @@ class Scene_Play : public Scene
 	bool					m_StateChanged		= false;
 	bool					m_reloadingLevel    = false;
 	bool					m_isSuperMario      = false;
+	bool					m_invincible        = false;
+	int						m_lives = 0;
+	float					m_invincibleTime;
 	const Vec2				m_gridSize	= { 16.0f, 16 };
 	sf::Text				m_gridText;
 	long int				m_score = 0;
 	sf::Text				m_scoreText;
 	sf::Text				m_timerText;
 	sf::Sound               m_sound;
-
+	
+	std::chrono::time_point<std::chrono::high_resolution_clock> invincibleTimer;
 	std::chrono::time_point<std::chrono::high_resolution_clock> startTimer;
 	std::chrono::time_point<std::chrono::high_resolution_clock> pauseStartTime = std::chrono::high_resolution_clock::now();;
 	

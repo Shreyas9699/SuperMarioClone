@@ -279,6 +279,14 @@ void Scene_Play::playerDead()
 
 void Scene_Play::update()
 {
+	if (m_invincible)
+	{
+		if ((std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now() -
+			invincibleTimer)).count() < m_invincibleTime)
+		{
+			m_invincible = false;
+		}
+	}
 	spawnEnemy();
 	m_entityManager.update();
 
@@ -304,6 +312,7 @@ void Scene_Play::sMovement()
 		input.canJump = false;
 		m_sound.setBuffer(m_game->getAssets().getSound("MarioAir"));
 		m_sound.play();
+		
 	}
 
 	float xSpeed = 0.0f;
@@ -520,6 +529,8 @@ void Scene_Play::sCollision()
 			if (name == "Piranha")
 			{
 				m_player->destroy();
+				m_lives = 0;
+				m_invincible = false;
 				spawnPlayer();
 			}
 
@@ -534,34 +545,42 @@ void Scene_Play::sCollision()
 			if (name == "Star")
 			{
 				// should make them invincible
+				m_invincible = true;
+				m_invincibleTime = 5.0f;
+				invincibleTimer = std::chrono::high_resolution_clock::now();
 				e->destroy();
 			}
 
 			if (name == "MushroomR")
 			{
-				// Turn into Super Mario
-				m_sound.setBuffer(m_game->getAssets().getSound("RedMushroom"));
-				m_sound.play();
 				if (m_isSuperMario)
 				{
 					m_score += 1000;
 					e->destroy();
+					m_sound.setBuffer(m_game->getAssets().getSound("RedMushroom"));
+					m_sound.play();
 					break;
 				}
 				else
 				{
+					m_isSuperMario = true;
+					m_player->getComponent<CState>().state = "SuperMarioStand";
+					m_StateChanged = true;
 					m_sound.setBuffer(m_game->getAssets().getSound("MarioToSuper"));
 					m_sound.play();
+					
 				}
-				m_isSuperMario = true;
-				m_player->getComponent<CState>().state = "SuperMarioStand";
-				m_StateChanged = true;
 				e->destroy();
 			}
 
 			if (name == "MushroomG")
 			{
 				// Give Extra lives
+				m_lives++;
+				if (m_lives >= 3)
+				{
+					m_lives = 3;
+				}
 				m_sound.setBuffer(m_game->getAssets().getSound("GreenMushroom"));
 				m_sound.play();
 				e->destroy();
@@ -571,58 +590,94 @@ void Scene_Play::sCollision()
 			{
 				if (name == "Goomba")
 				{
-					std::cout << "Goomba player horizontal collision\n";
-					if (m_isSuperMario)
+					if (!m_invincible)
 					{
-						m_isSuperMario = false;
-						m_player->getComponent<CState>().state = "MarioStand";
-						m_StateChanged = true;
-					}
-					else
-					{
-						playerDead();
-						m_sound.setBuffer(m_game->getAssets().getSound("MarioDeath"));
-						m_sound.play();
-						spawnPlayer();
+						if (m_isSuperMario)
+						{
+							m_isSuperMario = false;
+							m_player->getComponent<CState>().state = "MarioStand";
+							m_StateChanged = true;
+						}
+						else if (m_lives)
+						{
+							m_lives--;
+							m_invincible = true;
+							if (m_invincibleTime <= 2.0f)
+							{
+								invincibleTimer = std::chrono::high_resolution_clock::now();
+								m_invincibleTime = 2.0f;
+							}
+						}
+						else
+						{
+							playerDead();
+							m_sound.setBuffer(m_game->getAssets().getSound("MarioDeath"));
+							m_sound.play();
+							spawnPlayer();
+						}
 					}
 				}
 				else if (name == "Turtle")
 				{
-					if (m_isSuperMario)
+					if (!m_invincible)
 					{
-						m_isSuperMario = false;
-						m_player->getComponent<CState>().state = "MarioStand";
-						m_StateChanged = true;
-					}
-					else
-					{
-						playerDead();
-						spawnPlayer();
+						if (m_isSuperMario)
+						{
+							m_isSuperMario = false;
+							m_player->getComponent<CState>().state = "MarioStand";
+							m_StateChanged = true;
+						}
+						else if (m_lives)
+						{
+							m_lives--;
+							m_invincible = true;
+							if (m_invincibleTime <= 2.0f)
+							{
+								invincibleTimer = std::chrono::high_resolution_clock::now();
+								m_invincibleTime = 2.0f;
+							}
+						}
+						else
+						{
+							playerDead();
+							m_sound.setBuffer(m_game->getAssets().getSound("MarioDeath"));
+							m_sound.play();
+							spawnPlayer();
+						}
 					}
 				}
 				else if (name == "TurtleShell")
 				{
 					if (e->getComponent<CTransform>().velocity.x == 0.0f)
 					{
-						std::cout << "Shell state turtle and player collision \n";
 						if (prevOverlap.x > 0.0f)
 						{
-							std::cout << "Hit from left, so move right \n";
 							// move the shell to right
 							e->removeComponent<CLifeSpan>();
 							e->getComponent<CTransform>().velocity.x = -1 * TurtlePrevVel * 2;
 						}
 						else if (prevOverlap.x < 0.0f)
 						{
-							std::cout << "Hit from right, so move left \n";
 							// move the shell to right
 							e->removeComponent<CLifeSpan>();
 							e->getComponent<CTransform>().velocity.x = TurtlePrevVel * 2;
 						}
 					}
+					else if (m_lives != 0)
+					{
+						m_lives--;
+						m_invincible = true;
+						if (m_invincibleTime <= 2.0f)
+						{
+							invincibleTimer = std::chrono::high_resolution_clock::now();
+							m_invincibleTime = 2.0f;
+						}
+					}
 					else
 					{
 						playerDead();
+						m_sound.setBuffer(m_game->getAssets().getSound("MarioDeath"));
+						m_sound.play();
 						spawnPlayer();
 					}
 
@@ -685,6 +740,8 @@ void Scene_Play::sCollision()
 						eExplosion->addComponents<CTransform>(pos);
 						eExplosion->addComponents<CAnimation>(m_game->getAssets().getAnimation("Explosion"), false);
 						eExplosion->addComponents<CLifeSpan>(1.8);
+						m_sound.setBuffer(m_game->getAssets().getSound("BrickBreak"));
+						m_sound.play();
 					}
 				}
 				else // collision top i.e. 1 entity moving down hits top of another entity
@@ -728,14 +785,12 @@ void Scene_Play::sCollision()
 						// based on how close was it horizontally
 						if (prevOverlap.x > 0.0f)
 						{
-							std::cout << "Hit from left, so move right \n";
 							// move the shell to right
 							e->removeComponent<CLifeSpan>();
 							e->getComponent<CTransform>().velocity.x = -1 * TurtlePrevVel * 2;
 						}
 						else if (prevOverlap.x < 0.0f)
 						{
-							std::cout << "Hit from right, so move left \n";
 							// move the shell to right
 							e->removeComponent<CLifeSpan>();
 							e->getComponent<CTransform>().velocity.x = TurtlePrevVel * 2;
@@ -1091,11 +1146,13 @@ void Scene_Play::sRender()
 
 	// Render score
 	m_scoreText.setPosition(10, 10);
-	m_scoreText.setString("Score: " + std::to_string(m_score)); 
+	m_scoreText.setString("Score: " + std::to_string(m_score));
 	m_game->window().draw(m_scoreText);
 
-	// Render timer
-	std::string timeString = "Time: " + std::to_string((std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now() - startTimer)).count()) + "s";
+
+	// Render is invincible,  lives left and timer
+	std::string timeString = (m_invincible) ? "Invincible\t\t" : "";
+	timeString += "Lives left: " + std::to_string(m_lives) + "\t\t Time: " + std::to_string((std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now() - startTimer)).count()) + "s";
 	m_timerText.setString(timeString);
 	sf::FloatRect textRect = m_timerText.getLocalBounds();
 	m_timerText.setPosition(m_game->window().getSize().x - textRect.width - 10, 10);
